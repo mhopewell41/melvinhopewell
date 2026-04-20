@@ -5,37 +5,1372 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Credit Score Simulator</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5c6b88;
+      --primary: #2563eb;
+      --primary-dark: #1746b5;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 14px 34px rgba(20, 38, 73, 0.12);
+      --radius: 22px;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-      text-align: center;
-      padding: 60px 20px;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 24%),
+        linear-gradient(180deg, #f7faff, #eef4ff);
+      color: var(--ink);
+      min-height: 100vh;
     }
-    .card {
-      max-width: 750px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-    h1 { margin-top: 0; color: #1d4ed8; }
-    p { line-height: 1.6; }
+
     a {
-      display: inline-block;
-      margin-top: 20px;
+      color: inherit;
       text-decoration: none;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #0f172a;
+    }
+
+    .home-link {
+      background: #ffffff;
+      border: 1px solid #d6e3ff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .app-card {
+      background: var(--panel);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(37, 99, 235, 0.08);
+    }
+
+    .hero-strip {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 72%);
       color: white;
-      background: #1d4ed8;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-weight: bold;
+      padding: 28px;
+    }
+
+    .hero-strip h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+    }
+
+    .hero-strip p {
+      margin: 0;
+      max-width: 780px;
+      color: #e8f0ff;
+      line-height: 1.6;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .panel h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #123a95;
+      font-size: 1.3rem;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .panel ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .input-row {
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #143780;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #c7d8fb;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button,
+    .button-link {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover,
+    .button-link:hover {
+      transform: translateY(-2px);
+      opacity: 0.96;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+    }
+
+    .secondary {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #5b6f98;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .meter-wrap {
+      margin-bottom: 22px;
+    }
+
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      color: #38518a;
+      margin-bottom: 10px;
+    }
+
+    .score-meter {
+      height: 18px;
+      background: linear-gradient(90deg, #b91c1c, #f59e0b, #2563eb, #15803d);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-pin {
+      position: absolute;
+      top: -4px;
+      width: 24px;
+      height: 26px;
+      background: white;
+      border: 3px solid #0f172a;
+      border-radius: 999px;
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+
+    .round-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .round-card,
+    .sidebar-card {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .round-card h3,
+    .sidebar-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #123a95;
+      font-size: 1.35rem;
+    }
+
+    .factor-chip {
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: #e8f0ff;
+      color: #1746b5;
+    }
+
+    .scenario-text {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 14px;
+    }
+
+    .choice {
+      text-align: left;
+      background: white;
+      border: 1px solid #d9e5ff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(20, 38, 73, 0.05);
+    }
+
+    .choice-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #102b63;
+    }
+
+    .choice-title span:last-child {
+      white-space: nowrap;
+      font-size: 0.92rem;
+    }
+
+    .choice p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .choose-btn {
+      background: #eff5ff;
+      color: var(--primary-dark);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .choice:hover .choose-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .feedback-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #edf4ff;
+      border: 1px solid #d7e4ff;
+      border-radius: 16px;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      display: block;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-card p {
+      margin-top: 0;
+      color: var(--muted);
+    }
+
+    .log {
+      max-height: 420px;
+      overflow-y: auto;
+      display: grid;
+      gap: 12px;
+      padding-right: 4px;
+    }
+
+    .log-item {
+      background: white;
+      border: 1px solid #dde8ff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      font-weight: 700;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .log-item p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .score-up {
+      color: var(--success);
+    }
+
+    .score-down {
+      color: var(--danger);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    .summary-box {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 8px;
+      color: #143780;
+      font-size: 0.98rem;
+    }
+
+    .summary-box p {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      border: 1px solid #d9e6ff;
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .result-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: #123a95;
+    }
+
+    .result-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .submission-box {
+      margin-top: 18px;
+      background: #0f172a;
+      color: #e9f1ff;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .submission-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      border: none;
+      border-radius: 16px;
+      resize: vertical;
+      padding: 14px;
+      font: inherit;
+      color: #172033;
+    }
+
+    .tiny-note {
+      margin-top: 10px;
+      color: #d9e5ff;
+      font-size: 0.92rem;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .excellent {
+      background: #e8f7ee;
+      color: var(--success);
+    }
+
+    .good {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .fair {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .rough {
+      background: #ffe8e8;
+      color: var(--danger);
+    }
+
+    @media (max-width: 980px) {
+      .start-grid,
+      .round-grid,
+      .summary-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .content,
+      .hero-strip {
+        padding: 20px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      button,
+      .button-link,
+      .choose-btn {
+        width: 100%;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Finance Suite Game</p>
+        <h1>Credit Score Simulator</h1>
+      </div>
+      <a class="home-link" href="/melvinhopewell/">Back to Finance Suite Home</a>
+    </div>
+
+    <div class="app-card">
+      <div class="hero-strip">
+        <h2>Build your score like a brick wall, not a house of soggy cereal. 🧱</h2>
+        <p>
+          Play through 10 credit decisions. Payment history, utilization, applications, and smart habits
+          all affect your score. Finish strong and prove you can guide a credit profile without driving it into a hedge.
+        </p>
+      </div>
+
+      <div class="content">
+        <section id="startScreen" class="screen active">
+          <div class="start-grid">
+            <div class="panel">
+              <h3>How the game works</h3>
+              <p>
+                You begin with a starting credit score, one open credit card, and a series of realistic choices.
+                Each round changes your score and credit profile based on how responsibly you manage borrowing.
+              </p>
+              <ul>
+                <li>There are 10 rounds.</li>
+                <li>Payment history matters the most.</li>
+                <li>Keeping balances low helps utilization.</li>
+                <li>Too many new applications can nick your score.</li>
+                <li>At the end, copy your summary for Canvas.</li>
+              </ul>
+
+              <div class="input-row">
+                <label for="studentName">Student name</label>
+                <input id="studentName" type="text" placeholder="Enter your name" />
+              </div>
+
+              <div class="button-row">
+                <button id="startBtn" class="primary">Start Credit Score Simulator</button>
+                <a class="button-link secondary" href="/melvinhopewell/">Return to Home</a>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Score wisdom</h3>
+              <p>
+                Good credit is usually built with steady, almost boring behavior. That is the sneaky superpower.
+              </p>
+              <ul>
+                <li>Pay on time.</li>
+                <li>Keep card balances low.</li>
+                <li>Do not open accounts just because a cashier smiles and says points.</li>
+                <li>Fix errors when they show up.</li>
+                <li>Use credit carefully, not fearfully.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="gameScreen" class="screen">
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="stat-label">Round</div>
+              <div class="stat-value" id="roundStat">1 / 10</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Credit Score</div>
+              <div class="stat-value" id="scoreStat">640</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Card Balance</div>
+              <div class="stat-value" id="debtStat">$600</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Utilization</div>
+              <div class="stat-value" id="utilizationStat">30%</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Student</div>
+              <div class="stat-value" id="studentStat">Player</div>
+            </div>
+          </div>
+
+          <div class="meter-wrap">
+            <div class="meter-label">
+              <span>Credit Score Meter</span>
+              <span id="bandText">Fair</span>
+            </div>
+            <div class="score-meter">
+              <div id="scorePin" class="score-pin"></div>
+            </div>
+          </div>
+
+          <div class="round-grid">
+            <div class="round-card">
+              <div id="roundMeta"></div>
+              <h3 id="scenarioTitle">Scenario Title</h3>
+              <p id="scenarioText" class="scenario-text"></p>
+              <div id="choicesBox" class="choices"></div>
+
+              <div id="feedbackBox" class="feedback-box">
+                <strong>Credit Impact</strong>
+                <div id="feedbackText"></div>
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Credit History Log</h3>
+              <p>Every click leaves a footprint on the credit trail.</p>
+              <div id="logBox" class="log"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="endScreen" class="screen">
+          <div class="result-card">
+            <div id="resultBadge"></div>
+            <h2 id="resultTitle">Result</h2>
+            <p id="resultText"></p>
+
+            <div class="summary-grid">
+              <div class="summary-box">
+                <h4>Final Score</h4>
+                <p id="finalScore">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Final Utilization</h4>
+                <p id="finalUtilization">0%</p>
+              </div>
+              <div class="summary-box">
+                <h4>Hard Inquiries</h4>
+                <p id="finalInquiries">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Late Payments</h4>
+                <p id="finalLate">0</p>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="playAgainBtn" class="primary">Play Again</button>
+              <button id="copyBtn" class="secondary">Copy Submission Summary</button>
+              <a class="button-link secondary" href="/melvinhopewell/">Back to Home</a>
+            </div>
+
+            <div class="submission-box">
+              <h3>Submission Summary</h3>
+              <textarea id="submissionText" readonly></textarea>
+              <div class="tiny-note">Copy this text and submit it in Canvas.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        factor: "Payment History",
+        title: "The Due Date Sneaks Up",
+        text: "Your credit card payment is due tomorrow. You can pay in full, make the minimum, or ignore it and hope the universe is feeling generous.",
+        choices: [
+          {
+            label: "Pay the full amount on time",
+            description: "Strong payment history and lower balance.",
+            scoreDelta: 18,
+            debtDelta: -220,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Paying on time and reducing balance gave your score a healthy boost."
+          },
+          {
+            label: "Pay only the minimum on time",
+            description: "You stay current, but the balance remains heavy.",
+            scoreDelta: 6,
+            debtDelta: -60,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "You avoided a late payment, but high balances still weigh down the score."
+          },
+          {
+            label: "Miss the payment",
+            description: "A late payment stings.",
+            scoreDelta: -45,
+            debtDelta: 25,
+            inquiryDelta: 0,
+            lateDelta: 1,
+            note: "Late payments are score bruisers, especially early in your credit journey."
+          }
+        ]
+      },
+      {
+        factor: "New Credit",
+        title: "Store Card at Checkout",
+        text: "The cashier offers 20% off if you open a store card right now. Tempting little coupon goblin, is it not?",
+        choices: [
+          {
+            label: "Say no thanks",
+            description: "No new inquiry, no new account.",
+            scoreDelta: 4,
+            debtDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "You avoided an unnecessary inquiry and kept your profile steady."
+          },
+          {
+            label: "Apply only if you already planned a large purchase",
+            description: "One inquiry, but there is at least a strategy.",
+            scoreDelta: -8,
+            debtDelta: 80,
+            inquiryDelta: 1,
+            lateDelta: 0,
+            note: "A new application caused a small dip, and the purchase raised your balance."
+          },
+          {
+            label: "Apply just for the discount",
+            description: "Impulse applications can nibble at your score.",
+            scoreDelta: -16,
+            debtDelta: 120,
+            inquiryDelta: 1,
+            lateDelta: 0,
+            note: "An unnecessary account opening added an inquiry and more debt."
+          }
+        ]
+      },
+      {
+        factor: "Utilization",
+        title: "Big Purchase Decision",
+        text: "Your laptop quits dramatically. You need a replacement for school or work.",
+        choices: [
+          {
+            label: "Save up and delay the purchase",
+            description: "No new card balance today.",
+            scoreDelta: 8,
+            debtDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Avoiding new debt helped keep utilization in better shape."
+          },
+          {
+            label: "Put part of the cost on the card",
+            description: "The balance rises, but not wildly.",
+            scoreDelta: -10,
+            debtDelta: 220,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Higher utilization trimmed your score a bit."
+          },
+          {
+            label: "Max out most of the card",
+            description: "Your utilization jumps into the danger zone.",
+            scoreDelta: -28,
+            debtDelta: 650,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "High utilization can make a score wobble even if you have not missed payments."
+          }
+        ]
+      },
+      {
+        factor: "Credit Monitoring",
+        title: "Mystery Error on Your Report",
+        text: "You notice a credit report error showing a balance that is not yours.",
+        choices: [
+          {
+            label: "Dispute the error right away",
+            description: "You protect the accuracy of your report.",
+            scoreDelta: 15,
+            debtDelta: -90,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Disputing errors is one of the smartest quiet moves in credit management."
+          },
+          {
+            label: "Wait and see if it fixes itself",
+            description: "Maybe, maybe not.",
+            scoreDelta: -6,
+            debtDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Letting errors sit can keep your score under unnecessary pressure."
+          },
+          {
+            label: "Ignore it completely",
+            description: "The error lingers like a bad smell in a small room.",
+            scoreDelta: -18,
+            debtDelta: 30,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Ignoring report problems can leave damage on the board longer than needed."
+          }
+        ]
+      },
+      {
+        factor: "Payment History",
+        title: "Autopay Setup",
+        text: "You can set up autopay before life gets noisy and steals your attention.",
+        choices: [
+          {
+            label: "Set autopay for the full statement balance",
+            description: "Strong protection against late payments.",
+            scoreDelta: 18,
+            debtDelta: -140,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Autopay for the full balance helps payment history and utilization stay healthy."
+          },
+          {
+            label: "Set autopay for the minimum only",
+            description: "Better than missing, but not ideal.",
+            scoreDelta: 7,
+            debtDelta: -45,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Minimum autopay protects your payment history but keeps balances around longer."
+          },
+          {
+            label: "Skip autopay and trust memory alone",
+            description: "Risk enters the chat.",
+            scoreDelta: -10,
+            debtDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Memory is brave, but autopay is usually the sturdier ladder."
+          }
+        ]
+      },
+      {
+        factor: "Credit Limit",
+        title: "Limit Increase Offer",
+        text: "Your card issuer offers a credit limit increase. No hard inquiry is required.",
+        choices: [
+          {
+            label: "Accept it and keep spending the same",
+            description: "Utilization improves because your available credit grows.",
+            scoreDelta: 16,
+            debtDelta: 0,
+            limitDelta: 800,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "A higher limit with the same spending can improve utilization."
+          },
+          {
+            label: "Ignore the offer",
+            description: "Nothing changes.",
+            scoreDelta: 0,
+            debtDelta: 0,
+            limitDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "You stayed neutral. No help, no harm."
+          },
+          {
+            label: "Accept it and start spending more",
+            description: "The extra room turns into extra debt.",
+            scoreDelta: -14,
+            debtDelta: 260,
+            limitDelta: 800,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "A bigger limit only helps if you do not treat it like bonus money."
+          }
+        ]
+      },
+      {
+        factor: "Hard Inquiries",
+        title: "Multiple Loan Applications",
+        text: "You are shopping around for a loan, but you are tempted to apply everywhere all at once without a plan.",
+        choices: [
+          {
+            label: "Research first and apply carefully",
+            description: "Fewer inquiries, better control.",
+            scoreDelta: 6,
+            debtDelta: 0,
+            inquiryDelta: 1,
+            lateDelta: 0,
+            note: "A strategic application approach keeps inquiry damage small."
+          },
+          {
+            label: "Apply to several lenders at once",
+            description: "Your report gets peppered with inquiries.",
+            scoreDelta: -18,
+            debtDelta: 0,
+            inquiryDelta: 3,
+            lateDelta: 0,
+            note: "Too many hard inquiries in a short time can drag your score down."
+          },
+          {
+            label: "Apply blindly and open a new loan you did not need",
+            description: "Inquiries plus new debt make a messy combo.",
+            scoreDelta: -26,
+            debtDelta: 180,
+            inquiryDelta: 3,
+            lateDelta: 0,
+            note: "Unnecessary borrowing stacked pressure on both your score and debt load."
+          }
+        ]
+      },
+      {
+        factor: "Utilization",
+        title: "Vacation on Plastic",
+        text: "A trip sounds amazing, but your savings are thin. The credit card is winking at you from across the room.",
+        choices: [
+          {
+            label: "Choose a cheaper trip or wait",
+            description: "You avoid swelling the balance.",
+            scoreDelta: 10,
+            debtDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Protecting utilization usually beats borrowing for fun."
+          },
+          {
+            label: "Charge a moderate amount and plan a payoff",
+            description: "Manageable if you follow through.",
+            scoreDelta: -8,
+            debtDelta: 180,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Moderate new debt nudged utilization upward."
+          },
+          {
+            label: "Put the whole trip on the card",
+            description: "Your balance balloons.",
+            scoreDelta: -24,
+            debtDelta: 500,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "High balances can weigh down a score fast."
+          }
+        ]
+      },
+      {
+        factor: "Collections Risk",
+        title: "Forgotten Small Bill",
+        text: "A small medical bill is sitting unpaid. It is easy to ignore because it is small. That is exactly how tiny trouble grows teeth.",
+        choices: [
+          {
+            label: "Pay it immediately",
+            description: "You stop a small issue from becoming a loud one.",
+            scoreDelta: 12,
+            debtDelta: -60,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Handling small bills early helps keep collections trouble off your report."
+          },
+          {
+            label: "Set up a short payment plan",
+            description: "Not perfect, but responsible.",
+            scoreDelta: 4,
+            debtDelta: -20,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "A payment plan is often much better than letting the bill drift."
+          },
+          {
+            label: "Ignore it until it gets serious",
+            description: "That can backfire hard.",
+            scoreDelta: -22,
+            debtDelta: 20,
+            inquiryDelta: 0,
+            lateDelta: 1,
+            note: "Unpaid bills can snowball into credit damage if they move toward collections."
+          }
+        ]
+      },
+      {
+        factor: "Long-Term Habits",
+        title: "End of Year Credit Check",
+        text: "You have made it to the end of the simulation. One final choice remains about how you manage your accounts going forward.",
+        choices: [
+          {
+            label: "Keep old accounts open and use them lightly",
+            description: "Good for credit age and utilization.",
+            scoreDelta: 20,
+            debtDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Keeping older accounts open can help your credit profile when managed responsibly."
+          },
+          {
+            label: "Close your oldest card because you are not using it much",
+            description: "That can reduce available credit and shorten average age over time.",
+            scoreDelta: -12,
+            debtDelta: 0,
+            inquiryDelta: 0,
+            lateDelta: 0,
+            note: "Closing older accounts can hurt by shrinking credit history and utilization room."
+          },
+          {
+            label: "Open two more cards for emergencies",
+            description: "Too much new credit too fast.",
+            scoreDelta: -20,
+            debtDelta: 40,
+            inquiryDelta: 2,
+            lateDelta: 0,
+            note: "Stacking new accounts at once can make your score flinch."
+          }
+        ]
+      }
+    ];
+
+    const game = {
+      studentName: "Player",
+      round: 0,
+      score: 640,
+      debt: 600,
+      creditLimit: 2000,
+      hardInquiries: 0,
+      latePayments: 0,
+      events: []
+    };
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const endScreen = document.getElementById("endScreen");
+
+    const roundStat = document.getElementById("roundStat");
+    const scoreStat = document.getElementById("scoreStat");
+    const debtStat = document.getElementById("debtStat");
+    const utilizationStat = document.getElementById("utilizationStat");
+    const studentStat = document.getElementById("studentStat");
+    const bandText = document.getElementById("bandText");
+    const scorePin = document.getElementById("scorePin");
+
+    const roundMeta = document.getElementById("roundMeta");
+    const scenarioTitle = document.getElementById("scenarioTitle");
+    const scenarioText = document.getElementById("scenarioText");
+    const choicesBox = document.getElementById("choicesBox");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackText = document.getElementById("feedbackText");
+    const logBox = document.getElementById("logBox");
+
+    const resultBadge = document.getElementById("resultBadge");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const finalScore = document.getElementById("finalScore");
+    const finalUtilization = document.getElementById("finalUtilization");
+    const finalInquiries = document.getElementById("finalInquiries");
+    const finalLate = document.getElementById("finalLate");
+    const submissionText = document.getElementById("submissionText");
+
+    function showScreen(screen) {
+      [startScreen, gameScreen, endScreen].forEach(section => section.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clampScore(value) {
+      return Math.max(300, Math.min(850, value));
+    }
+
+    function formatMoney(value) {
+      const sign = value < 0 ? "-" : "";
+      return `${sign}$${Math.abs(value).toLocaleString()}`;
+    }
+
+    function getUtilization() {
+      if (game.creditLimit <= 0) return 0;
+      return Math.max(0, Math.round((game.debt / game.creditLimit) * 100));
+    }
+
+    function getBand(score) {
+      if (score >= 800) return "Excellent";
+      if (score >= 740) return "Very Good";
+      if (score >= 670) return "Good";
+      if (score >= 580) return "Fair";
+      return "Poor";
+    }
+
+    function updateMeter() {
+      const scorePercent = ((game.score - 300) / 550) * 100;
+      scorePin.style.left = `${Math.max(0, Math.min(100, scorePercent))}%`;
+      bandText.textContent = getBand(game.score);
+    }
+
+    function addLog(title, description, scoreDelta) {
+      game.events.unshift({ title, description, scoreDelta });
+      renderLog();
+    }
+
+    function renderLog() {
+      if (game.events.length === 0) {
+        logBox.innerHTML = "<div class='log-item'><p>No credit decisions yet. The report is quiet.</p></div>";
+        return;
+      }
+
+      logBox.innerHTML = game.events.map(event => {
+        const scoreClass = event.scoreDelta >= 0 ? "score-up" : "score-down";
+        const scoreText = `${event.scoreDelta > 0 ? "+" : ""}${event.scoreDelta} pts`;
+        return `
+          <div class="log-item">
+            <div class="log-top">
+              <span>${event.title}</span>
+              <span class="${scoreClass}">${scoreText}</span>
+            </div>
+            <p>${event.description}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function updateStats() {
+      roundStat.textContent = `${Math.min(game.round + 1, 10)} / 10`;
+      scoreStat.textContent = game.score;
+      debtStat.textContent = formatMoney(game.debt);
+      utilizationStat.textContent = `${getUtilization()}%`;
+      studentStat.textContent = game.studentName;
+      updateMeter();
+    }
+
+    function renderRound() {
+      feedbackBox.classList.remove("show");
+
+      if (game.round >= scenarios.length) {
+        endGame();
+        return;
+      }
+
+      const scenario = scenarios[game.round];
+      roundMeta.innerHTML = `
+        <span class="factor-chip">Factor: ${scenario.factor}</span>
+        <span class="factor-chip">Hard Inquiries: ${game.hardInquiries}</span>
+        <span class="factor-chip">Late Payments: ${game.latePayments}</span>
+      `;
+
+      scenarioTitle.textContent = scenario.title;
+      scenarioText.textContent = scenario.text;
+
+      choicesBox.innerHTML = scenario.choices.map((choice, index) => `
+        <div class="choice">
+          <div class="choice-title">
+            <span>Option ${index + 1}</span>
+            <span>${choice.scoreDelta > 0 ? "+" : ""}${choice.scoreDelta} pts</span>
+          </div>
+          <p><strong>${choice.label}</strong></p>
+          <p>${choice.description}</p>
+          <button class="choose-btn" onclick="chooseOption(${index})">Choose This Option</button>
+        </div>
+      `).join("");
+
+      updateStats();
+    }
+
+    function resetGame() {
+      game.studentName = document.getElementById("studentName").value.trim() || "Player";
+      game.round = 0;
+      game.score = 640;
+      game.debt = 600;
+      game.creditLimit = 2000;
+      game.hardInquiries = 0;
+      game.latePayments = 0;
+      game.events = [];
+      renderLog();
+      showScreen(gameScreen);
+      renderRound();
+    }
+
+    window.chooseOption = function(index) {
+      const scenario = scenarios[game.round];
+      const choice = scenario.choices[index];
+
+      game.score = clampScore(game.score + choice.scoreDelta);
+      game.debt = Math.max(0, game.debt + (choice.debtDelta || 0));
+      game.hardInquiries += choice.inquiryDelta || 0;
+      game.latePayments += choice.lateDelta || 0;
+      game.creditLimit += choice.limitDelta || 0;
+
+      const utilization = getUtilization();
+
+      if (utilization >= 80) {
+        game.score = clampScore(game.score - 12);
+      } else if (utilization >= 50) {
+        game.score = clampScore(game.score - 6);
+      } else if (utilization <= 10) {
+        game.score = clampScore(game.score + 6);
+      } else if (utilization <= 30) {
+        game.score = clampScore(game.score + 2);
+      }
+
+      addLog(
+        scenario.title,
+        `${choice.label}. ${choice.note}`,
+        choice.scoreDelta
+      );
+
+      feedbackText.innerHTML = `
+        <div><strong>Result:</strong> ${choice.note}</div>
+        <div style="margin-top:8px;"><strong>Current Score:</strong> ${game.score}</div>
+        <div style="margin-top:8px;"><strong>Utilization:</strong> ${utilization}%</div>
+      `;
+      feedbackBox.classList.add("show");
+
+      game.round += 1;
+      updateStats();
+
+      setTimeout(() => {
+        renderRound();
+      }, 900);
+    };
+
+    function getResultData() {
+      if (game.score >= 760 && game.latePayments === 0) {
+        return {
+          badgeClass: "excellent",
+          badgeText: "Credit Commander",
+          title: "You built a strong score with steady control.",
+          text: "You protected payment history, kept utilization from ballooning, and treated new credit with strategy instead of impulse."
+        };
+      }
+
+      if (game.score >= 690) {
+        return {
+          badgeClass: "good",
+          badgeText: "Solid Builder",
+          title: "You grew a healthy credit profile.",
+          text: "You made more good calls than risky ones and kept your score moving in the right direction."
+        };
+      }
+
+      if (game.score >= 620) {
+        return {
+          badgeClass: "fair",
+          badgeText: "Still Climbing",
+          title: "Your score stayed afloat, but it needs stronger habits.",
+          text: "A few choices helped, but late payments, higher balances, or extra applications made the climb steeper."
+        };
+      }
+
+      return {
+        badgeClass: "rough",
+        badgeText: "Credit Crash Cart",
+        title: "The score took some avoidable hits.",
+        text: "Too many risky choices dragged the profile down. The bright side is that replaying gives you a clean chance to practice better decisions."
+      };
+    }
+
+    function buildSubmissionSummary(result) {
+      const lines = [];
+      lines.push("Credit Score Simulator Submission Summary");
+      lines.push(`Student: ${game.studentName}`);
+      lines.push(`Final Credit Score: ${game.score}`);
+      lines.push(`Final Utilization: ${getUtilization()}%`);
+      lines.push(`Hard Inquiries: ${game.hardInquiries}`);
+      lines.push(`Late Payments: ${game.latePayments}`);
+      lines.push(`Result: ${result.badgeText}`);
+      lines.push("");
+      lines.push("Credit History Log:");
+
+      const orderedEvents = [...game.events].reverse();
+      orderedEvents.forEach((event, i) => {
+        lines.push(`${i + 1}. ${event.title} | ${event.scoreDelta > 0 ? "+" : ""}${event.scoreDelta} points`);
+        lines.push(`   ${event.description}`);
+      });
+
+      lines.push("");
+      lines.push("Reflection:");
+      lines.push("The best credit-building choices were paying on time, keeping balances lower, and avoiding unnecessary applications.");
+
+      return lines.join("\n");
+    }
+
+    function endGame() {
+      const result = getResultData();
+
+      resultBadge.innerHTML = `<span class="status-pill ${result.badgeClass}">${result.badgeText}</span>`;
+      resultTitle.textContent = result.title;
+      resultText.textContent = result.text;
+      finalScore.textContent = game.score;
+      finalUtilization.textContent = `${getUtilization()}%`;
+      finalInquiries.textContent = game.hardInquiries;
+      finalLate.textContent = game.latePayments;
+      submissionText.value = buildSubmissionSummary(result);
+
+      showScreen(endScreen);
+    }
+
+    async function copySummary() {
+      const text = submissionText.value;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Submission summary copied.");
+      } catch (error) {
+        submissionText.select();
+        document.execCommand("copy");
+        alert("Submission summary copied.");
+      }
+    }
+
+    document.getElementById("startBtn").addEventListener("click", resetGame);
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      document.getElementById("studentName").value = game.studentName === "Player" ? "" : game.studentName;
+      showScreen(startScreen);
+    });
+    document.getElementById("copyBtn").addEventListener("click", copySummary);
+
+    renderLog();
+    updateStats();
+  </script>
+</body>
+</html>
   <div class="card">
     <h1>Credit Score Simulator</h1>
     <p>This game page is live and ready for your full build.</p>
