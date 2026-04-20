@@ -5,59 +5,1278 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Budget Boss</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5c6b88;
+      --primary: #2563eb;
+      --primary-dark: #1746b5;
+      --accent: #dbeafe;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 14px 34px rgba(20, 38, 73, 0.12);
+      --radius: 22px;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-      text-align: center;
-      padding: 60px 20px;
-    }
-
-    .card {
-      max-width: 750px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    h1 {
-      margin-top: 0;
-      color: #1d4ed8;
-    }
-
-    p {
-      line-height: 1.6;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 24%),
+        linear-gradient(180deg, #f7faff, #eef4ff);
+      color: var(--ink);
+      min-height: 100vh;
     }
 
     a {
-      display: inline-block;
-      margin-top: 20px;
+      color: inherit;
       text-decoration: none;
-      color: white;
-      background: #1d4ed8;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-weight: bold;
     }
 
-    a:hover {
-      opacity: 0.9;
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #0f172a;
+    }
+
+    .home-link {
+      background: #ffffff;
+      border: 1px solid #d6e3ff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .app-card {
+      background: var(--panel);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(37, 99, 235, 0.08);
+    }
+
+    .hero-strip {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 72%);
+      color: white;
+      padding: 28px;
+    }
+
+    .hero-strip h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+    }
+
+    .hero-strip p {
+      margin: 0;
+      max-width: 780px;
+      color: #e8f0ff;
+      line-height: 1.6;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .panel h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #123a95;
+      font-size: 1.3rem;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .panel ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .input-row {
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #143780;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #c7d8fb;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button,
+    .button-link {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover,
+    .button-link:hover {
+      transform: translateY(-2px);
+      opacity: 0.96;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+    }
+
+    .secondary {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #5b6f98;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .progress-wrap {
+      margin-bottom: 22px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      color: #38518a;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      height: 14px;
+      background: #e3ecff;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+      transition: width 0.3s ease;
+    }
+
+    .round-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .round-card,
+    .sidebar-card {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .round-card h3,
+    .sidebar-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #123a95;
+      font-size: 1.35rem;
+    }
+
+    .bill-chip,
+    .bonus-chip {
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .bill-chip {
+      background: #ffe8e8;
+      color: var(--danger);
+    }
+
+    .bonus-chip {
+      background: #e7f8ec;
+      color: var(--success);
+    }
+
+    .scenario-text {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 14px;
+    }
+
+    .choice {
+      text-align: left;
+      background: white;
+      border: 1px solid #d9e5ff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(20, 38, 73, 0.05);
+    }
+
+    .choice-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #102b63;
+    }
+
+    .choice-title span:last-child {
+      white-space: nowrap;
+      font-size: 0.92rem;
+    }
+
+    .choice p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .choose-btn {
+      background: #eff5ff;
+      color: var(--primary-dark);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .choice:hover .choose-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .feedback-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #edf4ff;
+      border: 1px solid #d7e4ff;
+      border-radius: 16px;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      display: block;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-card p {
+      margin-top: 0;
+      color: var(--muted);
+    }
+
+    .log {
+      max-height: 380px;
+      overflow-y: auto;
+      display: grid;
+      gap: 12px;
+      padding-right: 4px;
+    }
+
+    .log-item {
+      background: white;
+      border: 1px solid #dde8ff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      font-weight: 700;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .log-item p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .money-up {
+      color: var(--success);
+    }
+
+    .money-down {
+      color: var(--danger);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    .summary-box {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 8px;
+      color: #143780;
+      font-size: 0.98rem;
+    }
+
+    .summary-box p {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      border: 1px solid #d9e6ff;
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .result-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: #123a95;
+    }
+
+    .result-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .submission-box {
+      margin-top: 18px;
+      background: #0f172a;
+      color: #e9f1ff;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .submission-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      border: none;
+      border-radius: 16px;
+      resize: vertical;
+      padding: 14px;
+      font: inherit;
+      color: #172033;
+    }
+
+    .tiny-note {
+      margin-top: 10px;
+      color: #d9e5ff;
+      font-size: 0.92rem;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .boss {
+      background: #e8f7ee;
+      color: var(--success);
+    }
+
+    .solid {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .close {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .meltdown {
+      background: #ffe8e8;
+      color: var(--danger);
+    }
+
+    @media (max-width: 940px) {
+      .start-grid,
+      .round-grid,
+      .summary-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .content,
+      .hero-strip {
+        padding: 20px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      button,
+      .button-link,
+      .choose-btn {
+        width: 100%;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Budget Boss</h1>
-    <p>
-      Welcome to Budget Boss. This game page is live and ready for your full game build.
-    </p>
-    <p>
-      More content coming soon.
-    </p>
-    <a href="../">Back to Finance Suite Home</a>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Finance Suite Game</p>
+        <h1>Budget Boss</h1>
+      </div>
+      <a class="home-link" href="/melvinhopewell/">Back to Finance Suite Home</a>
+    </div>
+
+    <div class="app-card">
+      <div class="hero-strip">
+        <h2>Can you survive the month without your money wandering off in tiny expensive shoes?</h2>
+        <p>
+          Play through 10 rounds of bills, choices, surprises, and strategy. Keep your balance above water,
+          make smart decisions, and finish the month like a budget boss.
+        </p>
+      </div>
+
+      <div class="content">
+        <section id="startScreen" class="screen active">
+          <div class="start-grid">
+            <div class="panel">
+              <h3>How the game works</h3>
+              <p>
+                You begin the month with a checking account balance and a stack of real-world decisions.
+                Each round has a fixed bill plus a scenario. Your choices affect your money and your
+                financial decision score.
+              </p>
+              <ul>
+                <li>There are 10 rounds in the game.</li>
+                <li>A mid-month paycheck arrives in Round 6.</li>
+                <li>Your goal is to finish with a healthy balance and a strong score.</li>
+                <li>At the end, use the copy button to grab your submission summary.</li>
+              </ul>
+
+              <div class="input-row">
+                <label for="studentName">Student name</label>
+                <input id="studentName" type="text" placeholder="Enter your name" />
+              </div>
+
+              <div class="button-row">
+                <button id="startBtn" class="primary">Start Budget Boss</button>
+                <a class="button-link secondary" href="/melvinhopewell/">Return to Home</a>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Winning mindset</h3>
+              <p>
+                You do not have to pick the cheapest option every time. Good budgeting is about
+                balance, planning, and avoiding flashy choices that punch holes in the wallet.
+              </p>
+              <ul>
+                <li>Protect cash for bills first.</li>
+                <li>Think twice before financing wants.</li>
+                <li>Short-term comfort can create long-term damage.</li>
+                <li>Steady choices usually beat dramatic ones.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="gameScreen" class="screen">
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="stat-label">Round</div>
+              <div class="stat-value" id="roundStat">1 / 10</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Balance</div>
+              <div class="stat-value" id="balanceStat">$0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Decision Score</div>
+              <div class="stat-value" id="scoreStat">50</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Student</div>
+              <div class="stat-value" id="studentStat">Player</div>
+            </div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-label">
+              <span>Month Progress</span>
+              <span id="progressText">Round 1 of 10</span>
+            </div>
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="round-grid">
+            <div class="round-card">
+              <div id="roundMeta"></div>
+              <h3 id="scenarioTitle">Scenario Title</h3>
+              <p id="scenarioText" class="scenario-text"></p>
+
+              <div id="choicesBox" class="choices"></div>
+
+              <div id="feedbackBox" class="feedback-box">
+                <strong id="feedbackHeading">Choice locked in</strong>
+                <div id="feedbackText"></div>
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Decision Log</h3>
+              <p>Every round leaves a trail. This is your financial breadcrumb map. 🍞💸</p>
+              <div id="logBox" class="log"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="endScreen" class="screen">
+          <div class="result-card">
+            <div id="resultBadge"></div>
+            <h2 id="resultTitle">Result</h2>
+            <p id="resultText"></p>
+
+            <div class="summary-grid">
+              <div class="summary-box">
+                <h4>Final Balance</h4>
+                <p id="finalBalance">$0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Decision Score</h4>
+                <p id="finalScore">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Risky Choices</h4>
+                <p id="finalRisky">0</p>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="playAgainBtn" class="primary">Play Again</button>
+              <button id="copyBtn" class="secondary">Copy Submission Summary</button>
+              <a class="button-link secondary" href="/melvinhopewell/">Back to Home</a>
+            </div>
+
+            <div class="submission-box">
+              <h3>Submission Summary</h3>
+              <textarea id="submissionText" readonly></textarea>
+              <div class="tiny-note">Copy this text and submit it in Canvas.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
+
+  <script>
+    const bills = [
+      { name: "Rent", amount: 850 },
+      { name: "Utilities", amount: 120 },
+      { name: "Phone Bill", amount: 85 },
+      { name: "Car Insurance", amount: 150 },
+      { name: "Internet", amount: 70 },
+      { name: "Gas", amount: 60 },
+      { name: "Groceries", amount: 110 },
+      { name: "Subscription Cleanup", amount: 35 },
+      { name: "Household Items", amount: 75 },
+      { name: "Unexpected Fee", amount: 95 }
+    ];
+
+    const scenarios = [
+      {
+        title: "Streaming Stack Attack",
+        text: "A friend suggests splitting entertainment subscriptions. You already pay for a couple, and your budget is feeling the squeeze. What do you do?",
+        choices: [
+          {
+            label: "Trim services and share one account legally with family",
+            delta: 20,
+            score: 6,
+            note: "You cut costs and kept the fun at a manageable level."
+          },
+          {
+            label: "Keep what you already have and do nothing",
+            delta: 0,
+            score: 1,
+            note: "You avoided extra spending, but you did not improve the situation either."
+          },
+          {
+            label: "Add more subscriptions because this month deserves luxury",
+            delta: -40,
+            score: -6,
+            note: "Tiny monthly charges love disguises. They also love multiplying."
+          }
+        ]
+      },
+      {
+        title: "Grocery Game Plan",
+        text: "Your refrigerator looks like a museum exhibit on sadness. You need food for the week.",
+        choices: [
+          {
+            label: "Meal prep with a grocery list",
+            delta: -90,
+            score: 6,
+            note: "Planning helped you control costs and still eat like a functioning human."
+          },
+          {
+            label: "Mix groceries with a few takeout meals",
+            delta: -135,
+            score: 2,
+            note: "Not terrible, but convenience took a visible bite out of your balance."
+          },
+          {
+            label: "Order takeout most nights",
+            delta: -210,
+            score: -6,
+            note: "Your budget heard the delivery fee and fainted dramatically."
+          }
+        ]
+      },
+      {
+        title: "Phone Upgrade Temptation",
+        text: "A shiny new phone appears in an ad like it has unfinished business with your self-control.",
+        choices: [
+          {
+            label: "Keep your current phone",
+            delta: 0,
+            score: 6,
+            note: "A strong choice. Wants do not always deserve a seat at the money table."
+          },
+          {
+            label: "Buy a modest used phone case and move on",
+            delta: -25,
+            score: 3,
+            note: "You scratched the itch without emptying the account."
+          },
+          {
+            label: "Finance a new phone right now",
+            delta: -220,
+            score: -8,
+            note: "Financing a want during a tight month is a classic budget wobble."
+          }
+        ]
+      },
+      {
+        title: "Weekend Plans",
+        text: "Your friends want to go out this weekend. Social life matters, but so does surviving the month.",
+        choices: [
+          {
+            label: "Choose a low-cost hangout",
+            delta: -30,
+            score: 5,
+            note: "You made room for fun without turning your balance into confetti."
+          },
+          {
+            label: "Go out but set a spending cap",
+            delta: -85,
+            score: 2,
+            note: "A reasonable middle lane."
+          },
+          {
+            label: "Spend big because memories are priceless",
+            delta: -180,
+            score: -6,
+            note: "Memories may be priceless. Tickets, food, and rides absolutely are not."
+          }
+        ]
+      },
+      {
+        title: "Transportation Trouble",
+        text: "Your car starts making a sound that translates roughly to: pay attention to me.",
+        choices: [
+          {
+            label: "Use a bus, carpool, or plan around it for now",
+            delta: -35,
+            score: 5,
+            note: "You adapted without overreacting."
+          },
+          {
+            label: "Get a basic repair and keep moving",
+            delta: -110,
+            score: 2,
+            note: "A practical choice, even if it pinched."
+          },
+          {
+            label: "Ignore it and rely on rideshares all week",
+            delta: -175,
+            score: -5,
+            note: "Avoiding one problem created a parade of smaller, expensive ones."
+          }
+        ]
+      },
+      {
+        title: "Mid-Month Reset",
+        text: "A paycheck hits your account this round. You also see a sale on things you do not actually need.",
+        choices: [
+          {
+            label: "Move on and protect the new paycheck",
+            delta: 0,
+            score: 6,
+            note: "Excellent restraint. You treated fresh money like a tool, not fireworks."
+          },
+          {
+            label: "Buy one planned item",
+            delta: -60,
+            score: 2,
+            note: "Not a disaster, as long as the purchase was truly planned."
+          },
+          {
+            label: "Celebrate with a mini shopping spree",
+            delta: -210,
+            score: -7,
+            note: "That paycheck barely got to say hello before it was chased out the door."
+          }
+        ]
+      },
+      {
+        title: "Credit Card Crossroads",
+        text: "You could put some purchases on a credit card this week. The question is how carefully you use it.",
+        choices: [
+          {
+            label: "Use cash or debit only",
+            delta: 0,
+            score: 5,
+            note: "You kept the month simple and clean."
+          },
+          {
+            label: "Use the credit card, but plan to pay it off immediately",
+            delta: -10,
+            score: 2,
+            note: "That can work if the plan is real and the balance gets cleared."
+          },
+          {
+            label: "Use the card freely and worry about it later",
+            delta: -95,
+            score: -8,
+            note: "Future You sent a formal complaint."
+          }
+        ]
+      },
+      {
+        title: "Lunch Spending Drift",
+        text: "Daily lunches do not feel huge one at a time, but repeated costs can turn into a sneaky budget leak.",
+        choices: [
+          {
+            label: "Pack lunch most days",
+            delta: -40,
+            score: 6,
+            note: "Steady habits quietly build strong budgets."
+          },
+          {
+            label: "Split between packed lunches and buying food",
+            delta: -80,
+            score: 2,
+            note: "A manageable compromise."
+          },
+          {
+            label: "Buy lunch every day",
+            delta: -145,
+            score: -5,
+            note: "Convenience made itself comfortable in your checking account."
+          }
+        ]
+      },
+      {
+        title: "Side Hustle Opportunity",
+        text: "A neighbor offers you a weekend side job. It is not glamorous, but it pays.",
+        choices: [
+          {
+            label: "Take the side job",
+            delta: 160,
+            score: 6,
+            note: "Extra income during a tight month is budget rocket fuel."
+          },
+          {
+            label: "Skip it and rest",
+            delta: 0,
+            score: 0,
+            note: "Rest has value, but you passed on a useful chance to strengthen the month."
+          },
+          {
+            label: "Turn it down and spend money going out instead",
+            delta: -95,
+            score: -5,
+            note: "You declined income and added spending. That is a rough combo."
+          }
+        ]
+      },
+      {
+        title: "Finish Line Choice",
+        text: "You are near the end of the month. There is still time to either finish strong or trip over a glittery bad decision.",
+        choices: [
+          {
+            label: "Hold steady and save what is left",
+            delta: 25,
+            score: 7,
+            note: "Strong finish. Quiet endings are often the best endings in a budget."
+          },
+          {
+            label: "Buy one small reward and stop there",
+            delta: -45,
+            score: 1,
+            note: "A controlled treat is workable."
+          },
+          {
+            label: "Spend heavily because you made it this far",
+            delta: -220,
+            score: -8,
+            note: "The finish line is not the ideal place for a financial cartwheel."
+          }
+        ]
+      }
+    ];
+
+    const game = {
+      studentName: "Player",
+      round: 0,
+      balance: 1800,
+      score: 50,
+      riskyChoices: 0,
+      events: [],
+      paycheckAdded: false
+    };
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const endScreen = document.getElementById("endScreen");
+
+    const roundStat = document.getElementById("roundStat");
+    const balanceStat = document.getElementById("balanceStat");
+    const scoreStat = document.getElementById("scoreStat");
+    const studentStat = document.getElementById("studentStat");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const roundMeta = document.getElementById("roundMeta");
+    const scenarioTitle = document.getElementById("scenarioTitle");
+    const scenarioText = document.getElementById("scenarioText");
+    const choicesBox = document.getElementById("choicesBox");
+    const logBox = document.getElementById("logBox");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackText = document.getElementById("feedbackText");
+
+    const resultBadge = document.getElementById("resultBadge");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const finalBalance = document.getElementById("finalBalance");
+    const finalScore = document.getElementById("finalScore");
+    const finalRisky = document.getElementById("finalRisky");
+    const submissionText = document.getElementById("submissionText");
+
+    function formatMoney(value) {
+      const sign = value < 0 ? "-" : "";
+      return `${sign}$${Math.abs(value).toLocaleString()}`;
+    }
+
+    function clampScore(value) {
+      return Math.max(0, Math.min(100, value));
+    }
+
+    function showScreen(screen) {
+      [startScreen, gameScreen, endScreen].forEach((section) => {
+        section.classList.remove("active");
+      });
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function resetGame() {
+      game.studentName = document.getElementById("studentName").value.trim() || "Player";
+      game.round = 0;
+      game.balance = 1800;
+      game.score = 50;
+      game.riskyChoices = 0;
+      game.events = [];
+      game.paycheckAdded = false;
+      showScreen(gameScreen);
+      renderRound();
+    }
+
+    function addLog(title, description, amount = 0) {
+      game.events.unshift({ title, description, amount });
+      renderLog();
+    }
+
+    function renderLog() {
+      if (game.events.length === 0) {
+        logBox.innerHTML = "<div class='log-item'><p>No moves yet. The budget board is waiting.</p></div>";
+        return;
+      }
+
+      logBox.innerHTML = game.events
+        .map((event) => {
+          let amountClass = "";
+          let amountText = "";
+
+          if (event.amount > 0) {
+            amountClass = "money-up";
+            amountText = `+${formatMoney(event.amount).replace("$", "$")}`;
+          } else if (event.amount < 0) {
+            amountClass = "money-down";
+            amountText = formatMoney(event.amount);
+          } else {
+            amountText = "$0";
+          }
+
+          return `
+            <div class="log-item">
+              <div class="log-top">
+                <span>${event.title}</span>
+                <span class="${amountClass}">${amountText}</span>
+              </div>
+              <p>${event.description}</p>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function updateStats() {
+      roundStat.textContent = `${Math.min(game.round + 1, 10)} / 10`;
+      balanceStat.textContent = formatMoney(game.balance);
+      scoreStat.textContent = game.score;
+      studentStat.textContent = game.studentName;
+      progressText.textContent = `Round ${Math.min(game.round + 1, 10)} of 10`;
+      progressFill.style.width = `${(game.round / 10) * 100}%`;
+    }
+
+    function renderRound() {
+      feedbackBox.classList.remove("show");
+
+      if (game.round >= scenarios.length) {
+        endGame();
+        return;
+      }
+
+      if (game.round === 5 && !game.paycheckAdded) {
+        game.balance += 1400;
+        game.paycheckAdded = true;
+        addLog("Mid-Month Paycheck", "Your paycheck hit the account and gave your budget some breathing room.", 1400);
+      }
+
+      const bill = bills[game.round];
+      game.balance -= bill.amount;
+      addLog(`Bill Paid: ${bill.name}`, `A fixed cost hit your account at the start of this round.`, -bill.amount);
+
+      const scenario = scenarios[game.round];
+
+      roundMeta.innerHTML = `
+        <span class="bill-chip">Bill Due: ${bill.name} ${formatMoney(-bill.amount)}</span>
+        ${game.round === 5 ? `<span class="bonus-chip">Paycheck Posted: ${formatMoney(1400)}</span>` : ""}
+      `;
+
+      scenarioTitle.textContent = scenario.title;
+      scenarioText.textContent = scenario.text;
+
+      choicesBox.innerHTML = scenario.choices
+        .map((choice, index) => {
+          const deltaText = choice.delta > 0 ? `+${formatMoney(choice.delta).replace("$", "$")}` : formatMoney(choice.delta);
+          return `
+            <div class="choice">
+              <div class="choice-title">
+                <span>Option ${index + 1}</span>
+                <span>${deltaText} | Score ${choice.score > 0 ? "+" : ""}${choice.score}</span>
+              </div>
+              <p>${choice.label}</p>
+              <button class="choose-btn" onclick="chooseOption(${index})">Choose This Option</button>
+            </div>
+          `;
+        })
+        .join("");
+
+      updateStats();
+    }
+
+    window.chooseOption = function(index) {
+      const scenario = scenarios[game.round];
+      const choice = scenario.choices[index];
+
+      game.balance += choice.delta;
+      game.score = clampScore(game.score + choice.score);
+
+      if (choice.score < 0) {
+        game.riskyChoices += 1;
+      }
+
+      addLog(
+        scenario.title,
+        `${choice.label} ${choice.note}`,
+        choice.delta
+      );
+
+      feedbackText.innerHTML = `
+        <div><strong>Choice Result:</strong> ${choice.note}</div>
+        <div style="margin-top:8px;"><strong>Balance Change:</strong> ${choice.delta > 0 ? "+" : ""}${formatMoney(choice.delta).replace("$", "$")}</div>
+      `;
+      feedbackBox.classList.add("show");
+
+      game.round += 1;
+      updateStats();
+      progressFill.style.width = `${(game.round / 10) * 100}%`;
+
+      setTimeout(() => {
+        renderRound();
+      }, 900);
+    };
+
+    function getResultData() {
+      if (game.balance >= 700 && game.score >= 78) {
+        return {
+          badgeClass: "boss",
+          badgeText: "Budget Boss",
+          title: "You finished like a financial field general.",
+          text: "You covered bills, kept control of your choices, and crossed the finish line with your budget still wearing both shoes."
+        };
+      }
+
+      if (game.balance >= 0 && game.score >= 62) {
+        return {
+          badgeClass: "solid",
+          badgeText: "Solid Survivor",
+          title: "You made it through the month with steady judgment.",
+          text: "This was a good run. You managed the essentials, avoided major damage, and kept your budget from wandering into chaos."
+        };
+      }
+
+      if (game.balance >= -250) {
+        return {
+          badgeClass: "close",
+          badgeText: "Close Call",
+          title: "You survived, but the budget was wobbling.",
+          text: "You got through the month, though a few costly choices made things tighter than they needed to be."
+        };
+      }
+
+      return {
+        badgeClass: "meltdown",
+        badgeText: "Budget Meltdown",
+        title: "The month turned into a money thunderstorm.",
+        text: "Bills landed, risky choices piled up, and the balance took a hard hit. The good news is that replaying the game gives you a clean shot at better decisions."
+      };
+    }
+
+    function buildSubmissionSummary(result) {
+      const lines = [];
+      lines.push("Budget Boss Submission Summary");
+      lines.push(`Student: ${game.studentName}`);
+      lines.push(`Final Balance: ${formatMoney(game.balance)}`);
+      lines.push(`Decision Score: ${game.score}`);
+      lines.push(`Risky Choices: ${game.riskyChoices}`);
+      lines.push(`Result: ${result.badgeText}`);
+      lines.push("");
+      lines.push("Decision Log:");
+
+      const orderedEvents = [...game.events].reverse();
+      orderedEvents.forEach((event, i) => {
+        lines.push(`${i + 1}. ${event.title} | ${event.amount > 0 ? "+" : ""}${formatMoney(event.amount).replace("$", "$")}`);
+        lines.push(`   ${event.description}`);
+      });
+
+      lines.push("");
+      lines.push("Reflection:");
+      lines.push("The choices that helped me most were the ones that protected cash for bills and avoided extra spending.");
+
+      return lines.join("\n");
+    }
+
+    function endGame() {
+      const result = getResultData();
+
+      resultBadge.innerHTML = `<span class="status-pill ${result.badgeClass}">${result.badgeText}</span>`;
+      resultTitle.textContent = result.title;
+      resultText.textContent = result.text;
+      finalBalance.textContent = formatMoney(game.balance);
+      finalScore.textContent = game.score;
+      finalRisky.textContent = game.riskyChoices;
+      submissionText.value = buildSubmissionSummary(result);
+
+      showScreen(endScreen);
+
+      try {
+        const prevBest = JSON.parse(localStorage.getItem("budgetBossBest") || "null");
+        if (!prevBest || game.score > prevBest.score || game.balance > prevBest.balance) {
+          localStorage.setItem("budgetBossBest", JSON.stringify({
+            student: game.studentName,
+            score: game.score,
+            balance: game.balance
+          }));
+        }
+      } catch (error) {
+        console.log("Local storage unavailable.");
+      }
+    }
+
+    async function copySummary() {
+      const text = submissionText.value;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Submission summary copied.");
+      } catch (error) {
+        submissionText.select();
+        document.execCommand("copy");
+        alert("Submission summary copied.");
+      }
+    }
+
+    document.getElementById("startBtn").addEventListener("click", resetGame);
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      document.getElementById("studentName").value = game.studentName === "Player" ? "" : game.studentName;
+      showScreen(startScreen);
+    });
+    document.getElementById("copyBtn").addEventListener("click", copySummary);
+
+    renderLog();
+  </script>
 </body>
 </html>
