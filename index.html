@@ -4,112 +4,142 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Melvin Hopewell Finance Suite</title>
+  <meta name="description" content="Browser-based personal finance games and learning tools for students." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="hero">
-    <h1>Melvin Hopewell Finance Suite</h1>
-    <p class="subtitle">
-      Browser-based personal finance games and learning tools for students.
-    </p>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="/melvinhopewell/">Melvin Hopewell Finance Suite</a>
+      <nav class="nav-links">
+        <a href="#games">Games</a>
+        <a href="#about">About</a>
+        <a class="nav-button" href="./budget-boss/">Launch Budget Boss</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="container">
-    <section class="intro-card">
-      <h2>Welcome</h2>
-      <p>
-        This site features interactive personal finance games designed to help students
-        build real-world money skills through hands-on practice.
-      </p>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Interactive Learning • Browser-Based • Student-Friendly</p>
+        <h1>Personal finance practice that feels more like play than paperwork.</h1>
+        <p class="hero-text">
+          Explore a growing collection of classroom-ready finance games designed to help students
+          build real-world money skills through choices, strategy, and repetition.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="./budget-boss/">Start with Budget Boss</a>
+          <a class="button secondary" href="#games">Browse All Games</a>
+        </div>
+      </div>
+
+      <div class="hero-panel">
+        <div class="panel-card">
+          <span class="panel-badge">Featured</span>
+          <h2>What students can practice</h2>
+          <ul class="panel-list">
+            <li>Budgeting monthly income and expenses</li>
+            <li>Understanding credit score decisions</li>
+            <li>Navigating taxes and financial forms</li>
+            <li>Building smart banking habits</li>
+            <li>Reviewing key finance concepts through game play</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="highlights">
+      <div class="container highlight-grid">
+        <article class="highlight-card">
+          <h3>Built for Students</h3>
+          <p>Clear design, fast access, and game-based practice that keeps the learning moving.</p>
+        </article>
+        <article class="highlight-card">
+          <h3>Built for Teachers</h3>
+          <p>Useful for review, reinforcement, class activities, intervention, and independent work.</p>
+        </article>
+        <article class="highlight-card">
+          <h3>Built for the Browser</h3>
+          <p>No downloads. No installation maze. Just click, open, and start learning.</p>
+        </article>
+      </div>
     </section>
 
-    <section class="games-grid">
-      <a class="game-card" href="./budget-boss/">
-        <h3>Budget Boss</h3>
-        <p>Manage income, expenses, and make it through the month.</p>
-      </a>
+    <section class="about-section" id="about">
+      <div class="container about-card">
+        <div>
+          <p class="section-label">About the Suite</p>
+          <h2>Finance concepts, minus the cardboard flavor.</h2>
+        </div>
+        <p>
+          The Melvin Hopewell Finance Suite brings together interactive tools and games that help
+          students practice personal finance in a more engaging way. Each activity is designed to
+          reinforce practical decision-making while keeping the experience approachable and useful
+          in a classroom setting.
+        </p>
+      </div>
+    </section>
 
-      <a class="game-card" href="./credit-score-simulator/">
-        <h3>Credit Score Simulator</h3>
-        <p>Explore how financial choices can raise or lower a credit score.</p>
-      </a>
+    <section class="games-section" id="games">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Game Library</p>
+            <h2>Choose a learning challenge</h2>
+          </div>
+          <p class="section-text">
+            Start with any game below. More features and upgrades can be added as the suite grows.
+          </p>
+        </div>
 
-      <a class="game-card" href="./tax-time-survivor/">
-        <h3>Tax Time Survivor</h3>
-        <p>Practice navigating taxes, forms, and filing decisions.</p>
-      </a>
+        <div class="games-grid">
+          <a class="game-card featured" href="./budget-boss/">
+            <span class="tag">Featured Game</span>
+            <h3>Budget Boss</h3>
+            <p>Manage income, bills, spending choices, and financial surprises across the month.</p>
+            <span class="card-link">Open Game</span>
+          </a>
 
-      <a class="game-card" href="./bank-smart-challenge/">
-        <h3>Bank Smart Challenge</h3>
-        <p>Build smarter banking habits through interactive decision-making.</p>
-      </a>
+          <a class="game-card" href="./credit-score-simulator/">
+            <span class="tag">Credit</span>
+            <h3>Credit Score Simulator</h3>
+            <p>Explore how borrowing, payments, and financial behavior can help or hurt a score.</p>
+            <span class="card-link">Open Game</span>
+          </a>
 
-      <a class="game-card" href="./boss-battle/">
-        <h3>Boss Battle</h3>
-        <p>Put your personal finance knowledge to the test in a quiz showdown.</p>
-      </a>
+          <a class="game-card" href="./tax-time-survivor/">
+            <span class="tag">Taxes</span>
+            <h3>Tax Time Survivor</h3>
+            <p>Practice filing decisions, forms, and tax concepts in a less painful universe.</p>
+            <span class="card-link">Open Game</span>
+          </a>
+
+          <a class="game-card" href="./bank-smart-challenge/">
+            <span class="tag">Banking</span>
+            <h3>Bank Smart Challenge</h3>
+            <p>Build stronger banking habits through choices about accounts, fees, and money management.</p>
+            <span class="card-link">Open Game</span>
+          </a>
+
+          <a class="game-card" href="./boss-battle/">
+            <span class="tag">Review</span>
+            <h3>Boss Battle</h3>
+            <p>Test personal finance knowledge in a quiz-style showdown built for review and repetition.</p>
+            <span class="card-link">Open Game</span>
+          </a>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <p>Created by Melvin Hopewell</p>
-  </footer>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Melvin Hopewell | Finance Suite Games</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header class="hero">
-    <h1>Finance Suite Games</h1>
-    <p class="subtitle">
-      Interactive personal finance games for students.
-    </p>
-  </header>
-
-  <main class="container">
-    <section class="intro-card">
-      <h2>Welcome</h2>
-      <p>
-        This site houses a growing suite of browser-based personal finance games
-        designed to make money skills more interactive, practical, and fun.
-      </p>
-    </section>
-
-    <section class="games-grid">
-      <a class="game-card" href="./budget-boss/">
-        <h3>Budget Boss</h3>
-        <p>Manage income, expenses, and survive the month.</p>
-      </a>
-
-      <a class="game-card" href="./credit-score-simulator/">
-        <h3>Credit Score Simulator</h3>
-        <p>See how financial choices can raise or lower your score.</p>
-      </a>
-
-      <a class="game-card" href="./tax-time-survivor/">
-        <h3>Tax Time Survivor</h3>
-        <p>Navigate taxes, forms, and filing decisions.</p>
-      </a>
-
-      <a class="game-card" href="./bank-smart-challenge/">
-        <h3>Bank Smart Challenge</h3>
-        <p>Practice smart banking habits and financial decisions.</p>
-      </a>
-
-      <a class="game-card" href="./boss-battle/">
-        <h3>Boss Battle</h3>
-        <p>Test your money knowledge in a quiz-style showdown.</p>
-      </a>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>Created by Melvin Hopewell</p>
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p>Created by Melvin Hopewell</p>
+      <a href="/melvinhopewell/">Back to Home</a>
+    </div>
   </footer>
 </body>
 </html>
