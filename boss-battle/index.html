@@ -5,37 +5,1300 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Boss Battle</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5c6b88;
+      --primary: #2563eb;
+      --primary-dark: #1746b5;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 14px 34px rgba(20, 38, 73, 0.12);
+      --radius: 22px;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-      text-align: center;
-      padding: 60px 20px;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 24%),
+        linear-gradient(180deg, #f7faff, #eef4ff);
+      color: var(--ink);
+      min-height: 100vh;
     }
-    .card {
-      max-width: 750px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-    h1 { margin-top: 0; color: #1d4ed8; }
-    p { line-height: 1.6; }
+
     a {
-      display: inline-block;
-      margin-top: 20px;
+      color: inherit;
       text-decoration: none;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #0f172a;
+    }
+
+    .home-link {
+      background: #ffffff;
+      border: 1px solid #d6e3ff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .app-card {
+      background: var(--panel);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(37, 99, 235, 0.08);
+    }
+
+    .hero-strip {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 72%);
       color: white;
-      background: #1d4ed8;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-weight: bold;
+      padding: 28px;
+    }
+
+    .hero-strip h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+    }
+
+    .hero-strip p {
+      margin: 0;
+      max-width: 780px;
+      color: #e8f0ff;
+      line-height: 1.6;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .panel h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #123a95;
+      font-size: 1.3rem;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .panel ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .input-row {
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #143780;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #c7d8fb;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button,
+    .button-link {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover,
+    .button-link:hover {
+      transform: translateY(-2px);
+      opacity: 0.96;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+    }
+
+    .secondary {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #5b6f98;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .meter-wrap {
+      margin-bottom: 22px;
+    }
+
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      color: #38518a;
+      margin-bottom: 10px;
+    }
+
+    .battle-meter {
+      height: 18px;
+      background: linear-gradient(90deg, #b91c1c, #f59e0b, #2563eb, #15803d);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .battle-pin {
+      position: absolute;
+      top: -4px;
+      width: 24px;
+      height: 26px;
+      background: white;
+      border: 3px solid #0f172a;
+      border-radius: 999px;
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+
+    .round-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .round-card,
+    .sidebar-card {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .round-card h3,
+    .sidebar-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #123a95;
+      font-size: 1.35rem;
+    }
+
+    .factor-chip {
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: #e8f0ff;
+      color: #1746b5;
+    }
+
+    .streak-chip {
+      background: #e8f7ee;
+      color: var(--success);
+    }
+
+    .scenario-text {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+      font-size: 1.05rem;
+    }
+
+    .choices {
+      display: grid;
+      gap: 14px;
+    }
+
+    .choice {
+      text-align: left;
+      background: white;
+      border: 1px solid #d9e5ff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(20, 38, 73, 0.05);
+      width: 100%;
+    }
+
+    .choice-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #102b63;
+    }
+
+    .choice p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .feedback-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #edf4ff;
+      border: 1px solid #d7e4ff;
+      border-radius: 16px;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      display: block;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .correct {
+      border-color: #b8e5c4;
+      background: #f1fbf4;
+    }
+
+    .incorrect {
+      border-color: #ffd0d0;
+      background: #fff6f6;
+    }
+
+    .sidebar-card p {
+      margin-top: 0;
+      color: var(--muted);
+    }
+
+    .log {
+      max-height: 420px;
+      overflow-y: auto;
+      display: grid;
+      gap: 12px;
+      padding-right: 4px;
+    }
+
+    .log-item {
+      background: white;
+      border: 1px solid #dde8ff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      font-weight: 700;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .log-item p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .score-up {
+      color: var(--success);
+    }
+
+    .score-down {
+      color: var(--danger);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    .summary-box {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 8px;
+      color: #143780;
+      font-size: 0.98rem;
+    }
+
+    .summary-box p {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      border: 1px solid #d9e6ff;
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .result-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: #123a95;
+    }
+
+    .result-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .submission-box {
+      margin-top: 18px;
+      background: #0f172a;
+      color: #e9f1ff;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .submission-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 240px;
+      border: none;
+      border-radius: 16px;
+      resize: vertical;
+      padding: 14px;
+      font: inherit;
+      color: #172033;
+    }
+
+    .tiny-note {
+      margin-top: 10px;
+      color: #d9e5ff;
+      font-size: 0.92rem;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .excellent {
+      background: #e8f7ee;
+      color: var(--success);
+    }
+
+    .good {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .fair {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .rough {
+      background: #ffe8e8;
+      color: var(--danger);
+    }
+
+    @media (max-width: 980px) {
+      .start-grid,
+      .round-grid,
+      .summary-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .content,
+      .hero-strip {
+        padding: 20px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      button,
+      .button-link,
+      .choice {
+        width: 100%;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Finance Suite Finale</p>
+        <h1>Boss Battle</h1>
+      </div>
+      <a class="home-link" href="/melvinhopewell/">Back to Finance Suite Home</a>
+    </div>
+
+    <div class="app-card">
+      <div class="hero-strip">
+        <h2>The final showdown. Twenty questions. One wallet brain. 🧠💸</h2>
+        <p>
+          Face a mixed set of personal finance questions across budgeting, credit, taxes, and banking.
+          Answer carefully, build a streak, and finish the suite like a champion instead of a confused receipt tornado.
+        </p>
+      </div>
+
+      <div class="content">
+        <section id="startScreen" class="screen active">
+          <div class="start-grid">
+            <div class="panel">
+              <h3>How Boss Battle works</h3>
+              <p>
+                You will face 20 multiple choice questions pulled from across the whole finance suite.
+                Correct answers build your score and streak. Each question also gives a quick explanation, so the battle doubles as review.
+              </p>
+              <ul>
+                <li>There are 20 questions.</li>
+                <li>Each correct answer earns 5 points.</li>
+                <li>Wrong answers break your streak, but the explanation still teaches the concept.</li>
+                <li>Your end screen includes a submission summary you can copy into Canvas.</li>
+              </ul>
+
+              <div class="input-row">
+                <label for="studentName">Student name</label>
+                <input id="studentName" type="text" placeholder="Enter your name" />
+              </div>
+
+              <div class="button-row">
+                <button id="startBtn" class="primary">Start Boss Battle</button>
+                <a class="button-link secondary" href="/melvinhopewell/">Return to Home</a>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Battle tips</h3>
+              <p>
+                This one rewards calm thinking more than speed. Read the wording. Watch for the safest, smartest long-term choice.
+              </p>
+              <ul>
+                <li>Protect essentials first.</li>
+                <li>Credit likes steady habits.</li>
+                <li>Taxes like records and accuracy.</li>
+                <li>Banks like attention, alerts, and less chaos.</li>
+                <li>Fancy wrong answers often sparkle on purpose.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="gameScreen" class="screen">
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="stat-label">Question</div>
+              <div class="stat-value" id="roundStat">1 / 20</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Score</div>
+              <div class="stat-value" id="scoreStat">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Correct</div>
+              <div class="stat-value" id="correctStat">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Streak</div>
+              <div class="stat-value" id="streakStat">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Student</div>
+              <div class="stat-value" id="studentStat">Player</div>
+            </div>
+          </div>
+
+          <div class="meter-wrap">
+            <div class="meter-label">
+              <span>Battle Meter</span>
+              <span id="bandText">Warm Up</span>
+            </div>
+            <div class="battle-meter">
+              <div id="battlePin" class="battle-pin"></div>
+            </div>
+          </div>
+
+          <div class="round-grid">
+            <div class="round-card">
+              <div id="roundMeta"></div>
+              <h3 id="questionText">Question text</h3>
+              <p id="questionPrompt" class="scenario-text"></p>
+              <div id="choicesBox" class="choices"></div>
+
+              <div id="feedbackBox" class="feedback-box">
+                <strong id="feedbackHeading">Answer Review</strong>
+                <div id="feedbackText"></div>
+                <div class="button-row">
+                  <button id="nextBtn" class="primary" style="display:none;">Next Question</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Battle Log</h3>
+              <p>Every answer leaves a little footprint on the arena floor.</p>
+              <div id="logBox" class="log"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="endScreen" class="screen">
+          <div class="result-card">
+            <div id="resultBadge"></div>
+            <h2 id="resultTitle">Result</h2>
+            <p id="resultText"></p>
+
+            <div class="summary-grid">
+              <div class="summary-box">
+                <h4>Final Score</h4>
+                <p id="finalScore">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Correct Answers</h4>
+                <p id="finalCorrect">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Accuracy</h4>
+                <p id="finalAccuracy">0%</p>
+              </div>
+              <div class="summary-box">
+                <h4>Best Streak</h4>
+                <p id="finalBestStreak">0</p>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="playAgainBtn" class="primary">Play Again</button>
+              <button id="copyBtn" class="secondary">Copy Submission Summary</button>
+              <a class="button-link secondary" href="/melvinhopewell/">Back to Home</a>
+            </div>
+
+            <div class="submission-box">
+              <h3>Submission Summary</h3>
+              <textarea id="submissionText" readonly></textarea>
+              <div class="tiny-note">Copy this text and submit it in Canvas.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const allQuestions = [
+      {
+        category: "Budgeting",
+        title: "Emergency Fund Basics",
+        prompt: "What is the main purpose of an emergency fund?",
+        options: [
+          "To buy luxury items without using cash",
+          "To cover unexpected expenses like repairs or medical bills",
+          "To increase your credit limit",
+          "To avoid paying taxes"
+        ],
+        correct: 1,
+        explanation: "An emergency fund is meant for unexpected expenses, not wants or credit tricks."
+      },
+      {
+        category: "Budgeting",
+        title: "Needs vs Wants",
+        prompt: "Which of these is usually a need rather than a want?",
+        options: [
+          "Daily coffee shop drinks",
+          "Streaming subscriptions",
+          "Rent",
+          "Concert tickets"
+        ],
+        correct: 2,
+        explanation: "Rent is a core living expense and is generally considered a need."
+      },
+      {
+        category: "Budgeting",
+        title: "Spending Awareness",
+        prompt: "Why is tracking spending useful?",
+        options: [
+          "It guarantees a tax refund",
+          "It helps you see where your money is going",
+          "It removes all bank fees automatically",
+          "It raises your credit score instantly"
+        ],
+        correct: 1,
+        explanation: "Tracking spending helps you spot habits, leaks, and areas where you can improve."
+      },
+      {
+        category: "Budgeting",
+        title: "Pay Yourself First",
+        prompt: "What does 'pay yourself first' usually mean?",
+        options: [
+          "Spend your paycheck before paying bills",
+          "Save money before spending on extras",
+          "Only use cash",
+          "Ignore your checking account balance"
+        ],
+        correct: 1,
+        explanation: "Paying yourself first means setting aside savings before optional spending."
+      },
+      {
+        category: "Credit",
+        title: "Payment History",
+        prompt: "Which factor has one of the biggest effects on a credit score?",
+        options: [
+          "Favorite store",
+          "Payment history",
+          "Phone wallpaper",
+          "ATM location"
+        ],
+        correct: 1,
+        explanation: "Payment history is one of the most important parts of a credit score."
+      },
+      {
+        category: "Credit",
+        title: "Utilization",
+        prompt: "Credit utilization refers to:",
+        options: [
+          "How much cash is in savings",
+          "How much of your available credit you are using",
+          "How many tax forms you receive",
+          "How often you check your balance"
+        ],
+        correct: 1,
+        explanation: "Utilization is the percentage of available credit currently being used."
+      },
+      {
+        category: "Credit",
+        title: "Hard Inquiries",
+        prompt: "Applying for many credit accounts in a short time can:",
+        options: [
+          "Always raise your score",
+          "Lower your score slightly",
+          "Erase late payments",
+          "Increase your paycheck"
+        ],
+        correct: 1,
+        explanation: "Multiple hard inquiries can lower a score, especially over a short period."
+      },
+      {
+        category: "Credit",
+        title: "Late Payments",
+        prompt: "Missing a credit card payment usually:",
+        options: [
+          "Helps build credit faster",
+          "Can hurt your credit score",
+          "Raises your bank balance",
+          "Counts as a tax deduction"
+        ],
+        correct: 1,
+        explanation: "Late payments can damage payment history and hurt your score."
+      },
+      {
+        category: "Credit",
+        title: "Best Credit Habit",
+        prompt: "Which is usually the strongest long-term credit habit?",
+        options: [
+          "Maxing out cards for rewards",
+          "Paying on time and keeping balances low",
+          "Opening new cards every month",
+          "Ignoring your credit report"
+        ],
+        correct: 1,
+        explanation: "Strong credit usually comes from on-time payments and lower utilization."
+      },
+      {
+        category: "Taxes",
+        title: "W-2 Form",
+        prompt: "A W-2 form is commonly used to report:",
+        options: [
+          "Lottery winnings only",
+          "Wages from an employer",
+          "Bank passwords",
+          "Cash gifts from relatives"
+        ],
+        correct: 1,
+        explanation: "A W-2 reports wages and taxes withheld from an employer-paid job."
+      },
+      {
+        category: "Taxes",
+        title: "1099 Income",
+        prompt: "Income from many side gigs may be reported on a:",
+        options: [
+          "W-2 only",
+          "1099 form",
+          "Driver license",
+          "Utility bill"
+        ],
+        correct: 1,
+        explanation: "Side income is often reported using a 1099 form."
+      },
+      {
+        category: "Taxes",
+        title: "Refund Meaning",
+        prompt: "A large tax refund often means:",
+        options: [
+          "You beat the system",
+          "You may have had too much tax withheld during the year",
+          "You paid no taxes at all",
+          "You earned extra credit points"
+        ],
+        correct: 1,
+        explanation: "A large refund often means you overpaid taxes through withholding."
+      },
+      {
+        category: "Taxes",
+        title: "Extensions",
+        prompt: "If you are not ready to file by the deadline, a smart step can be to:",
+        options: [
+          "Ignore the deadline completely",
+          "Request an extension if appropriate",
+          "Throw away your tax forms",
+          "Claim random deductions"
+        ],
+        correct: 1,
+        explanation: "Requesting an extension is far better than simply ignoring the deadline."
+      },
+      {
+        category: "Taxes",
+        title: "Deductions",
+        prompt: "You should generally claim deductions:",
+        options: [
+          "Only when you qualify and can support them",
+          "Whenever they sound useful",
+          "When a friend says to",
+          "Without keeping records"
+        ],
+        correct: 0,
+        explanation: "Deductions should be legitimate, supported, and appropriate for your situation."
+      },
+      {
+        category: "Taxes",
+        title: "Record Keeping",
+        prompt: "Why is keeping tax records important?",
+        options: [
+          "It raises your debit card limit",
+          "It helps you file accurately and support your return",
+          "It prevents all fees forever",
+          "It replaces a filing status"
+        ],
+        correct: 1,
+        explanation: "Records help support deductions, income, and other parts of your tax return."
+      },
+      {
+        category: "Banking",
+        title: "Balance Checks",
+        prompt: "Checking your account balance before spending can help prevent:",
+        options: [
+          "Credit report errors",
+          "Overdrafts",
+          "Tax withholding",
+          "Insurance premiums"
+        ],
+        correct: 1,
+        explanation: "Watching your balance is a key way to avoid overdrafts and declined purchases."
+      },
+      {
+        category: "Banking",
+        title: "Phishing",
+        prompt: "What should you do if you get a suspicious text claiming to be from your bank?",
+        options: [
+          "Click the link and log in right away",
+          "Reply with your password",
+          "Contact the bank through official channels",
+          "Forward it to friends"
+        ],
+        correct: 2,
+        explanation: "Verify through the official app, website, or bank phone number, not through the suspicious message."
+      },
+      {
+        category: "Banking",
+        title: "Alerts",
+        prompt: "Why are banking alerts useful?",
+        options: [
+          "They decorate your phone",
+          "They can help you spot fraud or low balances quickly",
+          "They lower taxes",
+          "They increase interest rates automatically"
+        ],
+        correct: 1,
+        explanation: "Alerts help you catch unusual activity and account problems faster."
+      },
+      {
+        category: "Banking",
+        title: "Savings Purpose",
+        prompt: "Savings accounts are especially useful for:",
+        options: [
+          "Holding money for future goals and emergencies",
+          "Avoiding all forms forever",
+          "Improving your Wi-Fi speed",
+          "Raising your credit score overnight"
+        ],
+        correct: 0,
+        explanation: "Savings accounts help store money for goals, emergencies, and future plans."
+      },
+      {
+        category: "Banking",
+        title: "Public Wi-Fi",
+        prompt: "Why is banking on public Wi-Fi risky?",
+        options: [
+          "It always doubles your fees",
+          "It can expose your information on unsecured networks",
+          "It erases your account history",
+          "It lowers your tax refund"
+        ],
+        correct: 1,
+        explanation: "Public Wi-Fi can be less secure, making sensitive banking activity riskier."
+      }
+    ];
+
+    const game = {
+      studentName: "Player",
+      currentIndex: 0,
+      score: 0,
+      correctCount: 0,
+      incorrectCount: 0,
+      streak: 0,
+      bestStreak: 0,
+      questions: [],
+      answers: []
+    };
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const endScreen = document.getElementById("endScreen");
+
+    const roundStat = document.getElementById("roundStat");
+    const scoreStat = document.getElementById("scoreStat");
+    const correctStat = document.getElementById("correctStat");
+    const streakStat = document.getElementById("streakStat");
+    const studentStat = document.getElementById("studentStat");
+    const bandText = document.getElementById("bandText");
+    const battlePin = document.getElementById("battlePin");
+
+    const roundMeta = document.getElementById("roundMeta");
+    const questionText = document.getElementById("questionText");
+    const questionPrompt = document.getElementById("questionPrompt");
+    const choicesBox = document.getElementById("choicesBox");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackHeading = document.getElementById("feedbackHeading");
+    const feedbackText = document.getElementById("feedbackText");
+    const nextBtn = document.getElementById("nextBtn");
+    const logBox = document.getElementById("logBox");
+
+    const resultBadge = document.getElementById("resultBadge");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const finalScore = document.getElementById("finalScore");
+    const finalCorrect = document.getElementById("finalCorrect");
+    const finalAccuracy = document.getElementById("finalAccuracy");
+    const finalBestStreak = document.getElementById("finalBestStreak");
+    const submissionText = document.getElementById("submissionText");
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function showScreen(screen) {
+      [startScreen, gameScreen, endScreen].forEach(section => section.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function getBattleLabel(percent) {
+      if (percent >= 90) return "Finance Titan";
+      if (percent >= 75) return "Heavy Hitter";
+      if (percent >= 55) return "On the Board";
+      return "Warm Up";
+    }
+
+    function updateMeter() {
+      const maxScore = game.questions.length * 5;
+      const percent = maxScore === 0 ? 0 : Math.round((game.score / maxScore) * 100);
+      battlePin.style.left = `${clamp(percent, 0, 100)}%`;
+      bandText.textContent = getBattleLabel(percent);
+    }
+
+    function addLog(question, status, category) {
+      game.answers.unshift({ question, status, category });
+      renderLog();
+    }
+
+    function renderLog() {
+      if (game.answers.length === 0) {
+        logBox.innerHTML = "<div class='log-item'><p>No answers yet. The arena is waiting.</p></div>";
+        return;
+      }
+
+      logBox.innerHTML = game.answers.map(item => `
+        <div class="log-item">
+          <div class="log-top">
+            <span>${item.question}</span>
+            <span class="${item.status === "Correct" ? "score-up" : "score-down"}">${item.status}</span>
+          </div>
+          <p>${item.category}</p>
+        </div>
+      `).join("");
+    }
+
+    function updateStats() {
+      roundStat.textContent = `${Math.min(game.currentIndex + 1, game.questions.length)} / ${game.questions.length}`;
+      scoreStat.textContent = game.score;
+      correctStat.textContent = game.correctCount;
+      streakStat.textContent = game.streak;
+      studentStat.textContent = game.studentName;
+      updateMeter();
+    }
+
+    function renderQuestion() {
+      feedbackBox.classList.remove("show");
+      nextBtn.style.display = "none";
+
+      if (game.currentIndex >= game.questions.length) {
+        endGame();
+        return;
+      }
+
+      const q = game.questions[game.currentIndex];
+
+      roundMeta.innerHTML = `
+        <span class="factor-chip">Category: ${q.category}</span>
+        <span class="factor-chip streak-chip">Best Streak: ${game.bestStreak}</span>
+      `;
+
+      questionText.textContent = q.title;
+      questionPrompt.textContent = q.prompt;
+
+      choicesBox.innerHTML = q.options.map((option, index) => `
+        <button class="choice" onclick="chooseOption(${index})">
+          <div class="choice-title">
+            <span>Option ${String.fromCharCode(65 + index)}</span>
+          </div>
+          <p>${option}</p>
+        </button>
+      `).join("");
+
+      updateStats();
+    }
+
+    function resetGame() {
+      game.studentName = document.getElementById("studentName").value.trim() || "Player";
+      game.currentIndex = 0;
+      game.score = 0;
+      game.correctCount = 0;
+      game.incorrectCount = 0;
+      game.streak = 0;
+      game.bestStreak = 0;
+      game.answers = [];
+      game.questions = shuffle(allQuestions).slice(0, 20);
+      renderLog();
+      showScreen(gameScreen);
+      renderQuestion();
+    }
+
+    function disableChoices() {
+      document.querySelectorAll(".choice").forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = "default";
+      });
+    }
+
+    window.chooseOption = function(index) {
+      const q = game.questions[game.currentIndex];
+      const choiceButtons = document.querySelectorAll(".choice");
+      disableChoices();
+
+      const isCorrect = index === q.correct;
+
+      choiceButtons[q.correct].classList.add("correct");
+      if (!isCorrect) {
+        choiceButtons[index].classList.add("incorrect");
+      }
+
+      if (isCorrect) {
+        game.score += 5;
+        game.correctCount += 1;
+        game.streak += 1;
+        game.bestStreak = Math.max(game.bestStreak, game.streak);
+        addLog(q.title, "Correct", q.category);
+        feedbackHeading.textContent = "Correct";
+        feedbackText.innerHTML = `
+          <div><strong>Why:</strong> ${q.explanation}</div>
+          <div style="margin-top:8px;"><strong>Score:</strong> +5 points</div>
+        `;
+      } else {
+        game.incorrectCount += 1;
+        game.streak = 0;
+        addLog(q.title, "Incorrect", q.category);
+        feedbackHeading.textContent = "Not this time";
+        feedbackText.innerHTML = `
+          <div><strong>Correct Answer:</strong> ${q.options[q.correct]}</div>
+          <div style="margin-top:8px;"><strong>Why:</strong> ${q.explanation}</div>
+          <div style="margin-top:8px;"><strong>Score:</strong> +0 points</div>
+        `;
+      }
+
+      feedbackBox.classList.add("show");
+      nextBtn.style.display = "inline-block";
+      updateStats();
+    };
+
+    function getResultData() {
+      const accuracy = Math.round((game.correctCount / game.questions.length) * 100);
+
+      if (accuracy >= 90) {
+        return {
+          badgeClass: "excellent",
+          badgeText: "Finance Titan",
+          title: "You stomped through the boss room like a calculator in armor.",
+          text: "Outstanding work. You showed strong command of budgeting, credit, taxes, and banking across the whole suite."
+        };
+      }
+
+      if (accuracy >= 75) {
+        return {
+          badgeClass: "good",
+          badgeText: "Heavy Hitter",
+          title: "You won the battle with real financial muscle.",
+          text: "Strong performance. You know your way around the main personal finance ideas and made plenty of smart calls."
+        };
+      }
+
+      if (accuracy >= 55) {
+        return {
+          badgeClass: "fair",
+          badgeText: "Still Standing",
+          title: "You made it through the arena and learned along the way.",
+          text: "A few concepts still need sharpening, but you built useful momentum and stayed in the fight."
+        };
+      }
+
+      return {
+        badgeClass: "rough",
+        badgeText: "Rematch Needed",
+        title: "The boss landed a few heavy hits this round.",
+        text: "No disaster here. This just means you have clear topics to review before your next attempt."
+      };
+    }
+
+    function buildSubmissionSummary(result) {
+      const accuracy = Math.round((game.correctCount / game.questions.length) * 100);
+      const orderedAnswers = [...game.answers].reverse();
+
+      const lines = [];
+      lines.push("Boss Battle Submission Summary");
+      lines.push(`Student: ${game.studentName}`);
+      lines.push(`Final Score: ${game.score}`);
+      lines.push(`Correct Answers: ${game.correctCount} out of ${game.questions.length}`);
+      lines.push(`Accuracy: ${accuracy}%`);
+      lines.push(`Best Streak: ${game.bestStreak}`);
+      lines.push(`Result: ${result.badgeText}`);
+      lines.push("");
+      lines.push("Battle Log:");
+
+      orderedAnswers.forEach((item, i) => {
+        lines.push(`${i + 1}. ${item.question} | ${item.status}`);
+        lines.push(`   Category: ${item.category}`);
+      });
+
+      lines.push("");
+      lines.push("Reflection:");
+      lines.push("The questions I need to review more are the ones I missed, especially in the categories where my streak dropped.");
+
+      return lines.join("\n");
+    }
+
+    function endGame() {
+      const result = getResultData();
+      const accuracy = Math.round((game.correctCount / game.questions.length) * 100);
+
+      resultBadge.innerHTML = `<span class="status-pill ${result.badgeClass}">${result.badgeText}</span>`;
+      resultTitle.textContent = result.title;
+      resultText.textContent = result.text;
+      finalScore.textContent = game.score;
+      finalCorrect.textContent = game.correctCount;
+      finalAccuracy.textContent = `${accuracy}%`;
+      finalBestStreak.textContent = game.bestStreak;
+      submissionText.value = buildSubmissionSummary(result);
+
+      showScreen(endScreen);
+    }
+
+    async function copySummary() {
+      const text = submissionText.value;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Submission summary copied.");
+      } catch (error) {
+        submissionText.select();
+        document.execCommand("copy");
+        alert("Submission summary copied.");
+      }
+    }
+
+    document.getElementById("startBtn").addEventListener("click", resetGame);
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      document.getElementById("studentName").value = game.studentName === "Player" ? "" : game.studentName;
+      showScreen(startScreen);
+    });
+    document.getElementById("copyBtn").addEventListener("click", copySummary);
+    nextBtn.addEventListener("click", () => {
+      game.currentIndex += 1;
+      renderQuestion();
+    });
+
+    renderLog();
+    updateStats();
+  </script>
+</body>
+</html>
   <div class="card">
     <h1>Boss Battle</h1>
     <p>This game page is live and ready for your full build.</p>
