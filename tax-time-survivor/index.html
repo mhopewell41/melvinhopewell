@@ -5,37 +5,1366 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tax Time Survivor</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5c6b88;
+      --primary: #2563eb;
+      --primary-dark: #1746b5;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 14px 34px rgba(20, 38, 73, 0.12);
+      --radius: 22px;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-      text-align: center;
-      padding: 60px 20px;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 24%),
+        linear-gradient(180deg, #f7faff, #eef4ff);
+      color: var(--ink);
+      min-height: 100vh;
     }
-    .card {
-      max-width: 750px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-    h1 { margin-top: 0; color: #1d4ed8; }
-    p { line-height: 1.6; }
+
     a {
-      display: inline-block;
-      margin-top: 20px;
+      color: inherit;
       text-decoration: none;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #0f172a;
+    }
+
+    .home-link {
+      background: #ffffff;
+      border: 1px solid #d6e3ff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .app-card {
+      background: var(--panel);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(37, 99, 235, 0.08);
+    }
+
+    .hero-strip {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 72%);
       color: white;
-      background: #1d4ed8;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-weight: bold;
+      padding: 28px;
+    }
+
+    .hero-strip h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+    }
+
+    .hero-strip p {
+      margin: 0;
+      max-width: 780px;
+      color: #e8f0ff;
+      line-height: 1.6;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .panel h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #123a95;
+      font-size: 1.3rem;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .panel ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .input-row {
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #143780;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #c7d8fb;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button,
+    .button-link {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover,
+    .button-link:hover {
+      transform: translateY(-2px);
+      opacity: 0.96;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+    }
+
+    .secondary {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #5b6f98;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .meter-wrap {
+      margin-bottom: 22px;
+    }
+
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      color: #38518a;
+      margin-bottom: 10px;
+    }
+
+    .confidence-meter {
+      height: 18px;
+      background: linear-gradient(90deg, #b91c1c, #f59e0b, #2563eb, #15803d);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .confidence-pin {
+      position: absolute;
+      top: -4px;
+      width: 24px;
+      height: 26px;
+      background: white;
+      border: 3px solid #0f172a;
+      border-radius: 999px;
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+
+    .round-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .round-card,
+    .sidebar-card {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .round-card h3,
+    .sidebar-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #123a95;
+      font-size: 1.35rem;
+    }
+
+    .factor-chip {
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: #e8f0ff;
+      color: #1746b5;
+    }
+
+    .warning-chip {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .scenario-text {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 14px;
+    }
+
+    .choice {
+      text-align: left;
+      background: white;
+      border: 1px solid #d9e5ff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(20, 38, 73, 0.05);
+    }
+
+    .choice-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #102b63;
+    }
+
+    .choice-title span:last-child {
+      white-space: nowrap;
+      font-size: 0.92rem;
+    }
+
+    .choice p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .choose-btn {
+      background: #eff5ff;
+      color: var(--primary-dark);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .choice:hover .choose-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .feedback-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #edf4ff;
+      border: 1px solid #d7e4ff;
+      border-radius: 16px;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      display: block;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-card p {
+      margin-top: 0;
+      color: var(--muted);
+    }
+
+    .log {
+      max-height: 420px;
+      overflow-y: auto;
+      display: grid;
+      gap: 12px;
+      padding-right: 4px;
+    }
+
+    .log-item {
+      background: white;
+      border: 1px solid #dde8ff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      font-weight: 700;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .log-item p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .score-up {
+      color: var(--success);
+    }
+
+    .score-down {
+      color: var(--danger);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    .summary-box {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 8px;
+      color: #143780;
+      font-size: 0.98rem;
+    }
+
+    .summary-box p {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      border: 1px solid #d9e6ff;
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .result-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: #123a95;
+    }
+
+    .result-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .submission-box {
+      margin-top: 18px;
+      background: #0f172a;
+      color: #e9f1ff;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .submission-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      border: none;
+      border-radius: 16px;
+      resize: vertical;
+      padding: 14px;
+      font: inherit;
+      color: #172033;
+    }
+
+    .tiny-note {
+      margin-top: 10px;
+      color: #d9e5ff;
+      font-size: 0.92rem;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .excellent {
+      background: #e8f7ee;
+      color: var(--success);
+    }
+
+    .good {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .fair {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .rough {
+      background: #ffe8e8;
+      color: var(--danger);
+    }
+
+    @media (max-width: 980px) {
+      .start-grid,
+      .round-grid,
+      .summary-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .content,
+      .hero-strip {
+        padding: 20px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      button,
+      .button-link,
+      .choose-btn {
+        width: 100%;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Finance Suite Game</p>
+        <h1>Tax Time Survivor</h1>
+      </div>
+      <a class="home-link" href="/melvinhopewell/">Back to Finance Suite Home</a>
+    </div>
+
+    <div class="app-card">
+      <div class="hero-strip">
+        <h2>Survive tax season with your dignity, your documents, and at least some of your sanity. 🧾</h2>
+        <p>
+          Play through 10 tax-time situations involving forms, deadlines, withholding, refunds,
+          deductions, and filing choices. Make smart decisions, avoid penalty potholes, and finish the season like a paperwork wizard.
+        </p>
+      </div>
+
+      <div class="content">
+        <section id="startScreen" class="screen active">
+          <div class="start-grid">
+            <div class="panel">
+              <h3>How the game works</h3>
+              <p>
+                You start with a tax confidence score, a filing readiness score, and a few lurking risks.
+                Each round presents a tax decision. Strong choices raise your confidence and lower your risk.
+              </p>
+              <ul>
+                <li>There are 10 rounds.</li>
+                <li>Good choices build tax confidence.</li>
+                <li>Bad choices raise audit or penalty risk.</li>
+                <li>You will meet W-2s, 1099s, deadlines, refunds, and deductions.</li>
+                <li>At the end, copy your summary for Canvas.</li>
+              </ul>
+
+              <div class="input-row">
+                <label for="studentName">Student name</label>
+                <input id="studentName" type="text" placeholder="Enter your name" />
+              </div>
+
+              <div class="button-row">
+                <button id="startBtn" class="primary">Start Tax Time Survivor</button>
+                <a class="button-link secondary" href="/melvinhopewell/">Return to Home</a>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Tax survival tips</h3>
+              <p>
+                Taxes reward preparation. They are less a monster and more a very picky filing cabinet.
+              </p>
+              <ul>
+                <li>Keep records.</li>
+                <li>Know which forms match your income.</li>
+                <li>Do not confuse a refund with free money.</li>
+                <li>File on time, or request an extension if needed.</li>
+                <li>Claim only deductions and credits you truly qualify for.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="gameScreen" class="screen">
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="stat-label">Round</div>
+              <div class="stat-value" id="roundStat">1 / 10</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Tax Confidence</div>
+              <div class="stat-value" id="confidenceStat">55</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Readiness</div>
+              <div class="stat-value" id="readinessStat">40</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Risk Level</div>
+              <div class="stat-value" id="riskStat">10</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Student</div>
+              <div class="stat-value" id="studentStat">Player</div>
+            </div>
+          </div>
+
+          <div class="meter-wrap">
+            <div class="meter-label">
+              <span>Tax Confidence Meter</span>
+              <span id="bandText">Learning</span>
+            </div>
+            <div class="confidence-meter">
+              <div id="confidencePin" class="confidence-pin"></div>
+            </div>
+          </div>
+
+          <div class="round-grid">
+            <div class="round-card">
+              <div id="roundMeta"></div>
+              <h3 id="scenarioTitle">Scenario Title</h3>
+              <p id="scenarioText" class="scenario-text"></p>
+              <div id="choicesBox" class="choices"></div>
+
+              <div id="feedbackBox" class="feedback-box">
+                <strong>Tax Impact</strong>
+                <div id="feedbackText"></div>
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Tax Trail Log</h3>
+              <p>Every filing choice leaves a paper echo in the hallway.</p>
+              <div id="logBox" class="log"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="endScreen" class="screen">
+          <div class="result-card">
+            <div id="resultBadge"></div>
+            <h2 id="resultTitle">Result</h2>
+            <p id="resultText"></p>
+
+            <div class="summary-grid">
+              <div class="summary-box">
+                <h4>Final Confidence</h4>
+                <p id="finalConfidence">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Final Readiness</h4>
+                <p id="finalReadiness">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Final Risk</h4>
+                <p id="finalRisk">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Penalty Triggers</h4>
+                <p id="finalMistakes">0</p>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="playAgainBtn" class="primary">Play Again</button>
+              <button id="copyBtn" class="secondary">Copy Submission Summary</button>
+              <a class="button-link secondary" href="/melvinhopewell/">Back to Home</a>
+            </div>
+
+            <div class="submission-box">
+              <h3>Submission Summary</h3>
+              <textarea id="submissionText" readonly></textarea>
+              <div class="tiny-note">Copy this text and submit it in Canvas.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        factor: "Income Forms",
+        warning: "Know your forms",
+        title: "The Mailbox of Mystery",
+        text: "You worked a regular part-time job and also made side money tutoring online. Tax forms begin arriving. Which documents do you expect and keep?",
+        choices: [
+          {
+            label: "Keep the W-2 from your employer and any 1099 form for side income",
+            description: "You match forms to income sources.",
+            confidenceDelta: 12,
+            readinessDelta: 10,
+            riskDelta: -2,
+            mistake: 0,
+            note: "Exactly right. W-2 forms report wages from an employer, while 1099 forms often report nonemployee income."
+          },
+          {
+            label: "Keep only the W-2 because side gigs do not count much",
+            description: "Missing income is a tax landmine in sneakers.",
+            confidenceDelta: -10,
+            readinessDelta: -8,
+            riskDelta: 10,
+            mistake: 1,
+            note: "Side income still matters. Ignoring it can lead to underreporting income."
+          },
+          {
+            label: "Throw away the forms after reading them once",
+            description: "Bold strategy. Poor filing cabinet energy.",
+            confidenceDelta: -16,
+            readinessDelta: -12,
+            riskDelta: 14,
+            mistake: 1,
+            note: "Tax forms should be kept and used to file accurately."
+          }
+        ]
+      },
+      {
+        factor: "Withholding",
+        warning: "Refund myths",
+        title: "Refund Fever",
+        text: "A friend says getting a huge refund means you won at taxes. You are deciding whether to change your withholding.",
+        choices: [
+          {
+            label: "Adjust withholding so it better matches what you actually owe",
+            description: "A refund is not a trophy. It is usually overpaid tax returning home.",
+            confidenceDelta: 12,
+            readinessDelta: 8,
+            riskDelta: -1,
+            mistake: 0,
+            note: "Smart move. A huge refund often means too much was withheld from paychecks during the year."
+          },
+          {
+            label: "Leave everything alone without checking",
+            description: "Neutral, but not strategic.",
+            confidenceDelta: 0,
+            readinessDelta: 0,
+            riskDelta: 2,
+            mistake: 0,
+            note: "This is not disastrous, but reviewing withholding is a better habit."
+          },
+          {
+            label: "Increase withholding a lot just to chase a giant refund",
+            description: "You are loaning your money to the government interest-free.",
+            confidenceDelta: -8,
+            readinessDelta: -4,
+            riskDelta: 2,
+            mistake: 0,
+            note: "A refund feels nice, but overwithholding means you had less money during the year."
+          }
+        ]
+      },
+      {
+        factor: "Deductions",
+        warning: "Claim honestly",
+        title: "The Tempting Deduction Forest",
+        text: "You are filing and wonder whether you should list random expenses as deductions just because they sound official.",
+        choices: [
+          {
+            label: "Claim only deductions you can document and actually qualify for",
+            description: "Receipts are the lanterns in this forest.",
+            confidenceDelta: 14,
+            readinessDelta: 10,
+            riskDelta: -4,
+            mistake: 0,
+            note: "Correct. Deductions should be legitimate and supported by records."
+          },
+          {
+            label: "Guess at a few deductions because it probably balances out",
+            description: "That is not how balance works. That is how letters arrive.",
+            confidenceDelta: -12,
+            readinessDelta: -8,
+            riskDelta: 10,
+            mistake: 1,
+            note: "Guessing at deductions can lead to inaccurate filing and possible penalties."
+          },
+          {
+            label: "Claim everything possible and hope nobody notices",
+            description: "A tax return is not a costume party.",
+            confidenceDelta: -18,
+            readinessDelta: -14,
+            riskDelta: 16,
+            mistake: 1,
+            note: "Claiming deductions you do not qualify for raises risk and can bring penalties."
+          }
+        ]
+      },
+      {
+        factor: "Record Keeping",
+        warning: "Save receipts",
+        title: "Receipt Avalanche",
+        text: "You have donation slips, school supply receipts, and work expense records in a backpack that looks like it lost a fight with a blender.",
+        choices: [
+          {
+            label: "Organize your records by type before filing",
+            description: "Chaotic paper becomes useful evidence.",
+            confidenceDelta: 12,
+            readinessDelta: 14,
+            riskDelta: -5,
+            mistake: 0,
+            note: "Great choice. Organized records make filing more accurate and easier."
+          },
+          {
+            label: "Use what you remember and ignore the pile",
+            description: "Memory is not a filing system.",
+            confidenceDelta: -8,
+            readinessDelta: -10,
+            riskDelta: 8,
+            mistake: 1,
+            note: "Tax records should be organized and available in case you need to support a claim."
+          },
+          {
+            label: "Throw most of it away to save time",
+            description: "The trash can does not issue duplicates.",
+            confidenceDelta: -16,
+            readinessDelta: -14,
+            riskDelta: 12,
+            mistake: 1,
+            note: "Discarding useful records can create trouble if you need documentation later."
+          }
+        ]
+      },
+      {
+        factor: "Filing Deadline",
+        warning: "Time matters",
+        title: "Deadline Approaches Like a Drumline",
+        text: "Tax day is close. You are not fully ready yet. What do you do?",
+        choices: [
+          {
+            label: "File on time if ready, or request an extension if needed",
+            description: "That is adulting with structure.",
+            confidenceDelta: 14,
+            readinessDelta: 10,
+            riskDelta: -4,
+            mistake: 0,
+            note: "Correct. Filing on time or requesting an extension is better than ignoring the deadline."
+          },
+          {
+            label: "Wait and hope the deadline is flexible",
+            description: "It is flexible in the way a brick is flexible.",
+            confidenceDelta: -10,
+            readinessDelta: -10,
+            riskDelta: 10,
+            mistake: 1,
+            note: "Ignoring deadlines can lead to penalties and stress."
+          },
+          {
+            label: "Do nothing because taxes are scary anyway",
+            description: "Fear is understandable. It is not a filing method.",
+            confidenceDelta: -16,
+            readinessDelta: -16,
+            riskDelta: 16,
+            mistake: 1,
+            note: "Failing to act can create avoidable penalties and bigger problems."
+          }
+        ]
+      },
+      {
+        factor: "Refund or Balance Due",
+        warning: "Know the difference",
+        title: "The Surprise Amount",
+        text: "Your return shows you owe a small amount instead of getting a refund. You feel betrayed by the universe.",
+        choices: [
+          {
+            label: "Pay what you owe and review withholding for next year",
+            description: "Not fun, but very smart.",
+            confidenceDelta: 12,
+            readinessDelta: 8,
+            riskDelta: -2,
+            mistake: 0,
+            note: "Exactly right. Owing a small amount is manageable and may mean withholding was closer to accurate."
+          },
+          {
+            label: "Ignore it because you thought refunds were guaranteed",
+            description: "Refunds are not participation trophies.",
+            confidenceDelta: -12,
+            readinessDelta: -8,
+            riskDelta: 12,
+            mistake: 1,
+            note: "You may owe taxes if not enough was withheld or paid during the year."
+          },
+          {
+            label: "Panic and file nothing at all",
+            description: "This only upgrades a small problem into a louder one.",
+            confidenceDelta: -15,
+            readinessDelta: -12,
+            riskDelta: 14,
+            mistake: 1,
+            note: "Filing and addressing the amount due is much better than avoiding the return."
+          }
+        ]
+      },
+      {
+        factor: "Tax Credits",
+        warning: "Credits are specific",
+        title: "Credit Confusion Carnival",
+        text: "You hear about tax credits and wonder if you should claim one just because it sounds useful.",
+        choices: [
+          {
+            label: "Check eligibility rules before claiming any credit",
+            description: "Specific beats imaginary every time.",
+            confidenceDelta: 14,
+            readinessDelta: 10,
+            riskDelta: -4,
+            mistake: 0,
+            note: "Correct. Credits have rules, and you should confirm that you qualify."
+          },
+          {
+            label: "Claim a credit because a friend got it",
+            description: "Your friend is not a tax category.",
+            confidenceDelta: -10,
+            readinessDelta: -8,
+            riskDelta: 10,
+            mistake: 1,
+            note: "Eligibility depends on your own situation, not someone else's."
+          },
+          {
+            label: "Claim every credit you can find online",
+            description: "That is less research and more credit confetti.",
+            confidenceDelta: -18,
+            readinessDelta: -12,
+            riskDelta: 16,
+            mistake: 1,
+            note: "Claiming credits without qualifying can create errors and penalties."
+          }
+        ]
+      },
+      {
+        factor: "Self-Employment Tax",
+        warning: "Side hustle counts",
+        title: "Gig Income Ambush",
+        text: "Your side hustle made more money than expected. You remember hearing that self-employment income may involve extra tax responsibilities.",
+        choices: [
+          {
+            label: "Set aside money and report the income properly",
+            description: "That is the steady road.",
+            confidenceDelta: 14,
+            readinessDelta: 10,
+            riskDelta: -3,
+            mistake: 0,
+            note: "Good move. Side income often needs to be reported, and planning ahead helps cover tax obligations."
+          },
+          {
+            label: "Report only some of it to keep the bill lower",
+            description: "That is not tax strategy. That is inaccurate reporting.",
+            confidenceDelta: -15,
+            readinessDelta: -10,
+            riskDelta: 14,
+            mistake: 1,
+            note: "Income should be reported accurately, including self-employment income."
+          },
+          {
+            label: "Pretend the gig money is invisible",
+            description: "Money is many things. Invisible is rarely one of them.",
+            confidenceDelta: -20,
+            readinessDelta: -14,
+            riskDelta: 18,
+            mistake: 1,
+            note: "Ignoring side income can cause underreporting and future trouble."
+          }
+        ]
+      },
+      {
+        factor: "Filing Status",
+        warning: "Choose correctly",
+        title: "The Status Switchboard",
+        text: "You are choosing a filing status and realize it changes how the return works. Guessing feels risky.",
+        choices: [
+          {
+            label: "Choose the filing status that matches your actual situation",
+            description: "Tax forms enjoy accuracy almost as much as they enjoy tiny print.",
+            confidenceDelta: 12,
+            readinessDelta: 10,
+            riskDelta: -3,
+            mistake: 0,
+            note: "Correct. Filing status should match your real situation because it affects taxes and eligibility."
+          },
+          {
+            label: "Pick the one that sounds best",
+            description: "This is how people end up arguing with paperwork.",
+            confidenceDelta: -10,
+            readinessDelta: -8,
+            riskDelta: 10,
+            mistake: 1,
+            note: "Filing status is not decorative. It should match your real circumstances."
+          },
+          {
+            label: "Choose randomly because the form has too many boxes",
+            description: "The boxes can tell when you are bluffing.",
+            confidenceDelta: -15,
+            readinessDelta: -12,
+            riskDelta: 14,
+            mistake: 1,
+            note: "Choosing the wrong filing status can cause errors and delays."
+          }
+        ]
+      },
+      {
+        factor: "Final Review",
+        warning: "Double-check",
+        title: "Last Look Before Launch",
+        text: "Your return is nearly done. You could submit right now, or you could review names, numbers, forms, and direct deposit details first.",
+        choices: [
+          {
+            label: "Review everything carefully before submitting",
+            description: "The final check is the shield at the gate.",
+            confidenceDelta: 16,
+            readinessDelta: 12,
+            riskDelta: -5,
+            mistake: 0,
+            note: "Excellent choice. Reviewing details can catch simple errors before they become frustrating delays."
+          },
+          {
+            label: "Submit quickly because it is probably fine",
+            description: "Sometimes fine is fine. Sometimes fine is a future inconvenience.",
+            confidenceDelta: 0,
+            readinessDelta: -2,
+            riskDelta: 4,
+            mistake: 0,
+            note: "A quick file is not always a careful file."
+          },
+          {
+            label: "Skip the review and rush it out immediately",
+            description: "The send button should not be a catapult.",
+            confidenceDelta: -12,
+            readinessDelta: -10,
+            riskDelta: 10,
+            mistake: 1,
+            note: "Rushing can lead to simple mistakes that delay refunds or create correction headaches."
+          }
+        ]
+      }
+    ];
+
+    const game = {
+      studentName: "Player",
+      round: 0,
+      confidence: 55,
+      readiness: 40,
+      risk: 10,
+      penaltyTriggers: 0,
+      events: []
+    };
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const endScreen = document.getElementById("endScreen");
+
+    const roundStat = document.getElementById("roundStat");
+    const confidenceStat = document.getElementById("confidenceStat");
+    const readinessStat = document.getElementById("readinessStat");
+    const riskStat = document.getElementById("riskStat");
+    const studentStat = document.getElementById("studentStat");
+    const bandText = document.getElementById("bandText");
+    const confidencePin = document.getElementById("confidencePin");
+
+    const roundMeta = document.getElementById("roundMeta");
+    const scenarioTitle = document.getElementById("scenarioTitle");
+    const scenarioText = document.getElementById("scenarioText");
+    const choicesBox = document.getElementById("choicesBox");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackText = document.getElementById("feedbackText");
+    const logBox = document.getElementById("logBox");
+
+    const resultBadge = document.getElementById("resultBadge");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const finalConfidence = document.getElementById("finalConfidence");
+    const finalReadiness = document.getElementById("finalReadiness");
+    const finalRisk = document.getElementById("finalRisk");
+    const finalMistakes = document.getElementById("finalMistakes");
+    const submissionText = document.getElementById("submissionText");
+
+    function showScreen(screen) {
+      [startScreen, gameScreen, endScreen].forEach(section => section.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function getBand(value) {
+      if (value >= 85) return "Tax Wizard";
+      if (value >= 70) return "Prepared";
+      if (value >= 50) return "Learning";
+      return "Shaky";
+    }
+
+    function updateMeter() {
+      confidencePin.style.left = `${clamp(game.confidence, 0, 100)}%`;
+      bandText.textContent = getBand(game.confidence);
+    }
+
+    function addLog(title, description, confidenceDelta) {
+      game.events.unshift({ title, description, confidenceDelta });
+      renderLog();
+    }
+
+    function renderLog() {
+      if (game.events.length === 0) {
+        logBox.innerHTML = "<div class='log-item'><p>No tax choices yet. The forms are still whispering.</p></div>";
+        return;
+      }
+
+      logBox.innerHTML = game.events.map(event => {
+        const scoreClass = event.confidenceDelta >= 0 ? "score-up" : "score-down";
+        const scoreText = `${event.confidenceDelta > 0 ? "+" : ""}${event.confidenceDelta} conf`;
+        return `
+          <div class="log-item">
+            <div class="log-top">
+              <span>${event.title}</span>
+              <span class="${scoreClass}">${scoreText}</span>
+            </div>
+            <p>${event.description}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function updateStats() {
+      roundStat.textContent = `${Math.min(game.round + 1, 10)} / 10`;
+      confidenceStat.textContent = game.confidence;
+      readinessStat.textContent = game.readiness;
+      riskStat.textContent = game.risk;
+      studentStat.textContent = game.studentName;
+      updateMeter();
+    }
+
+    function renderRound() {
+      feedbackBox.classList.remove("show");
+
+      if (game.round >= scenarios.length) {
+        endGame();
+        return;
+      }
+
+      const scenario = scenarios[game.round];
+
+      roundMeta.innerHTML = `
+        <span class="factor-chip">Factor: ${scenario.factor}</span>
+        <span class="factor-chip warning-chip">Penalty Triggers: ${game.penaltyTriggers}</span>
+      `;
+
+      scenarioTitle.textContent = scenario.title;
+      scenarioText.textContent = scenario.text;
+
+      choicesBox.innerHTML = scenario.choices.map((choice, index) => `
+        <div class="choice">
+          <div class="choice-title">
+            <span>Option ${index + 1}</span>
+            <span>${choice.confidenceDelta > 0 ? "+" : ""}${choice.confidenceDelta} conf</span>
+          </div>
+          <p><strong>${choice.label}</strong></p>
+          <p>${choice.description}</p>
+          <button class="choose-btn" onclick="chooseOption(${index})">Choose This Option</button>
+        </div>
+      `).join("");
+
+      updateStats();
+    }
+
+    function resetGame() {
+      game.studentName = document.getElementById("studentName").value.trim() || "Player";
+      game.round = 0;
+      game.confidence = 55;
+      game.readiness = 40;
+      game.risk = 10;
+      game.penaltyTriggers = 0;
+      game.events = [];
+      renderLog();
+      showScreen(gameScreen);
+      renderRound();
+    }
+
+    window.chooseOption = function(index) {
+      const scenario = scenarios[game.round];
+      const choice = scenario.choices[index];
+
+      game.confidence = clamp(game.confidence + choice.confidenceDelta, 0, 100);
+      game.readiness = clamp(game.readiness + choice.readinessDelta, 0, 100);
+      game.risk = clamp(game.risk + choice.riskDelta, 0, 100);
+      game.penaltyTriggers += choice.mistake || 0;
+
+      if (game.readiness >= 80) {
+        game.confidence = clamp(game.confidence + 2, 0, 100);
+      }
+
+      if (game.risk >= 70) {
+        game.confidence = clamp(game.confidence - 4, 0, 100);
+      }
+
+      addLog(
+        scenario.title,
+        `${choice.label}. ${choice.note}`,
+        choice.confidenceDelta
+      );
+
+      feedbackText.innerHTML = `
+        <div><strong>Result:</strong> ${choice.note}</div>
+        <div style="margin-top:8px;"><strong>Confidence:</strong> ${game.confidence}</div>
+        <div style="margin-top:8px;"><strong>Readiness:</strong> ${game.readiness}</div>
+        <div style="margin-top:8px;"><strong>Risk:</strong> ${game.risk}</div>
+      `;
+      feedbackBox.classList.add("show");
+
+      game.round += 1;
+      updateStats();
+
+      setTimeout(() => {
+        renderRound();
+      }, 900);
+    };
+
+    function getResultData() {
+      if (game.confidence >= 82 && game.risk <= 20 && game.penaltyTriggers === 0) {
+        return {
+          badgeClass: "excellent",
+          badgeText: "Tax Wizard",
+          title: "You navigated tax season like a calm spreadsheet sorcerer.",
+          text: "You matched forms correctly, respected deadlines, kept records, and avoided the classic traps that turn filing season into a swamp."
+        };
+      }
+
+      if (game.confidence >= 68 && game.risk <= 40) {
+        return {
+          badgeClass: "good",
+          badgeText: "Prepared Filer",
+          title: "You handled tax season with steady judgment.",
+          text: "A few bumps showed up, but overall you made thoughtful choices and kept your filing process solid."
+        };
+      }
+
+      if (game.confidence >= 50) {
+        return {
+          badgeClass: "fair",
+          badgeText: "Still Learning",
+          title: "You made it through, but a few tax gremlins got loose.",
+          text: "You understood some key ideas, though a few risky choices raised your chances of errors or delays."
+        };
+      }
+
+      return {
+        badgeClass: "rough",
+        badgeText: "Paperwork Storm",
+        title: "Tax season turned into a document tornado.",
+        text: "Missed details, shaky guesses, and risky filing choices piled up. The bright side is that a replay gives you a fresh stack of better decisions."
+      };
+    }
+
+    function buildSubmissionSummary(result) {
+      const lines = [];
+      lines.push("Tax Time Survivor Submission Summary");
+      lines.push(`Student: ${game.studentName}`);
+      lines.push(`Final Tax Confidence: ${game.confidence}`);
+      lines.push(`Final Readiness: ${game.readiness}`);
+      lines.push(`Final Risk: ${game.risk}`);
+      lines.push(`Penalty Triggers: ${game.penaltyTriggers}`);
+      lines.push(`Result: ${result.badgeText}`);
+      lines.push("");
+      lines.push("Tax Trail Log:");
+
+      const orderedEvents = [...game.events].reverse();
+      orderedEvents.forEach((event, i) => {
+        lines.push(`${i + 1}. ${event.title} | ${event.confidenceDelta > 0 ? "+" : ""}${event.confidenceDelta} confidence`);
+        lines.push(`   ${event.description}`);
+      });
+
+      lines.push("");
+      lines.push("Reflection:");
+      lines.push("The strongest tax choices were keeping accurate records, filing on time, reporting all income, and claiming only credits or deductions that truly fit.");
+
+      return lines.join("\n");
+    }
+
+    function endGame() {
+      const result = getResultData();
+
+      resultBadge.innerHTML = `<span class="status-pill ${result.badgeClass}">${result.badgeText}</span>`;
+      resultTitle.textContent = result.title;
+      resultText.textContent = result.text;
+      finalConfidence.textContent = game.confidence;
+      finalReadiness.textContent = game.readiness;
+      finalRisk.textContent = game.risk;
+      finalMistakes.textContent = game.penaltyTriggers;
+      submissionText.value = buildSubmissionSummary(result);
+
+      showScreen(endScreen);
+    }
+
+    async function copySummary() {
+      const text = submissionText.value;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Submission summary copied.");
+      } catch (error) {
+        submissionText.select();
+        document.execCommand("copy");
+        alert("Submission summary copied.");
+      }
+    }
+
+    document.getElementById("startBtn").addEventListener("click", resetGame);
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      document.getElementById("studentName").value = game.studentName === "Player" ? "" : game.studentName;
+      showScreen(startScreen);
+    });
+    document.getElementById("copyBtn").addEventListener("click", copySummary);
+
+    renderLog();
+    updateStats();
+  </script>
+</body>
+</html>
   <div class="card">
     <h1>Tax Time Survivor</h1>
     <p>This game page is live and ready for your full build.</p>
