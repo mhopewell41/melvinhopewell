@@ -5,37 +5,1389 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bank Smart Challenge</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5c6b88;
+      --primary: #2563eb;
+      --primary-dark: #1746b5;
+      --success: #15803d;
+      --warning: #b45309;
+      --danger: #b91c1c;
+      --shadow: 0 14px 34px rgba(20, 38, 73, 0.12);
+      --radius: 22px;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-      text-align: center;
-      padding: 60px 20px;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 24%),
+        linear-gradient(180deg, #f7faff, #eef4ff);
+      color: var(--ink);
+      min-height: 100vh;
     }
-    .card {
-      max-width: 750px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
-    h1 { margin-top: 0; color: #1d4ed8; }
-    p { line-height: 1.6; }
+
     a {
-      display: inline-block;
-      margin-top: 20px;
+      color: inherit;
       text-decoration: none;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #0f172a;
+    }
+
+    .home-link {
+      background: #ffffff;
+      border: 1px solid #d6e3ff;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .app-card {
+      background: var(--panel);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid rgba(37, 99, 235, 0.08);
+    }
+
+    .hero-strip {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8 72%);
       color: white;
-      background: #1d4ed8;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-weight: bold;
+      padding: 28px;
+    }
+
+    .hero-strip h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+    }
+
+    .hero-strip p {
+      margin: 0;
+      max-width: 780px;
+      color: #e8f0ff;
+      line-height: 1.6;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .start-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .panel h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #123a95;
+      font-size: 1.3rem;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .panel ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    .input-row {
+      margin-top: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #143780;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #c7d8fb;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button,
+    .button-link {
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover,
+    .button-link:hover {
+      transform: translateY(-2px);
+      opacity: 0.96;
+    }
+
+    .primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.25);
+    }
+
+    .secondary {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #5b6f98;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .meter-wrap {
+      margin-bottom: 22px;
+    }
+
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      color: #38518a;
+      margin-bottom: 10px;
+    }
+
+    .smart-meter {
+      height: 18px;
+      background: linear-gradient(90deg, #b91c1c, #f59e0b, #2563eb, #15803d);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .smart-pin {
+      position: absolute;
+      top: -4px;
+      width: 24px;
+      height: 26px;
+      background: white;
+      border: 3px solid #0f172a;
+      border-radius: 999px;
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+
+    .round-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .round-card,
+    .sidebar-card {
+      background: #f8fbff;
+      border: 1px solid #dce7ff;
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .round-card h3,
+    .sidebar-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #123a95;
+      font-size: 1.35rem;
+    }
+
+    .factor-chip {
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: #e8f0ff;
+      color: #1746b5;
+    }
+
+    .alert-chip {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .scenario-text {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .choices {
+      display: grid;
+      gap: 14px;
+    }
+
+    .choice {
+      text-align: left;
+      background: white;
+      border: 1px solid #d9e5ff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(20, 38, 73, 0.05);
+    }
+
+    .choice-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #102b63;
+    }
+
+    .choice-title span:last-child {
+      white-space: nowrap;
+      font-size: 0.92rem;
+    }
+
+    .choice p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .choose-btn {
+      background: #eff5ff;
+      color: var(--primary-dark);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .choice:hover .choose-btn {
+      background: var(--primary);
+      color: white;
+    }
+
+    .feedback-box {
+      margin-top: 18px;
+      padding: 16px;
+      background: #edf4ff;
+      border: 1px solid #d7e4ff;
+      border-radius: 16px;
+      display: none;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      display: block;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-card p {
+      margin-top: 0;
+      color: var(--muted);
+    }
+
+    .log {
+      max-height: 420px;
+      overflow-y: auto;
+      display: grid;
+      gap: 12px;
+      padding-right: 4px;
+    }
+
+    .log-item {
+      background: white;
+      border: 1px solid #dde8ff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      font-weight: 700;
+      color: #143780;
+      margin-bottom: 6px;
+    }
+
+    .log-item p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .score-up {
+      color: var(--success);
+    }
+
+    .score-down {
+      color: var(--danger);
+    }
+
+    .money-up {
+      color: var(--success);
+    }
+
+    .money-down {
+      color: var(--danger);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 22px 0;
+    }
+
+    .summary-box {
+      background: #f8fbff;
+      border: 1px solid #dbe7ff;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 8px;
+      color: #143780;
+      font-size: 0.98rem;
+    }
+
+    .summary-box p {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      border: 1px solid #d9e6ff;
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .result-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: #123a95;
+    }
+
+    .result-card p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .submission-box {
+      margin-top: 18px;
+      background: #0f172a;
+      color: #e9f1ff;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .submission-box h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      border: none;
+      border-radius: 16px;
+      resize: vertical;
+      padding: 14px;
+      font: inherit;
+      color: #172033;
+    }
+
+    .tiny-note {
+      margin-top: 10px;
+      color: #d9e5ff;
+      font-size: 0.92rem;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .excellent {
+      background: #e8f7ee;
+      color: var(--success);
+    }
+
+    .good {
+      background: #e8f0ff;
+      color: var(--primary-dark);
+    }
+
+    .fair {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .rough {
+      background: #ffe8e8;
+      color: var(--danger);
+    }
+
+    @media (max-width: 980px) {
+      .start-grid,
+      .round-grid,
+      .summary-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .content,
+      .hero-strip {
+        padding: 20px;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      button,
+      .button-link,
+      .choose-btn {
+        width: 100%;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <p class="eyebrow">Finance Suite Game</p>
+        <h1>Bank Smart Challenge</h1>
+      </div>
+      <a class="home-link" href="/melvinhopewell/">Back to Finance Suite Home</a>
+    </div>
+
+    <div class="app-card">
+      <div class="hero-strip">
+        <h2>Can you run your bank life without feeding it to fees, fraud, and bad clicks? 🏦</h2>
+        <p>
+          Play through 10 banking decisions involving checking, savings, debit cards, overdrafts,
+          mobile deposits, alerts, and account safety. Make smart moves, protect your money, and finish with your banking habits polished like chrome.
+        </p>
+      </div>
+
+      <div class="content">
+        <section id="startScreen" class="screen active">
+          <div class="start-grid">
+            <div class="panel">
+              <h3>How the game works</h3>
+              <p>
+                You start with a checking balance, a small savings account, and a banking skill score.
+                Each round presents a realistic banking choice. Good decisions help your money and reduce risk.
+              </p>
+              <ul>
+                <li>There are 10 rounds.</li>
+                <li>Good choices improve your banking skill score.</li>
+                <li>Poor choices can raise fees or fraud risk.</li>
+                <li>You will manage checking, savings, alerts, and account safety.</li>
+                <li>At the end, copy your summary for Canvas.</li>
+              </ul>
+
+              <div class="input-row">
+                <label for="studentName">Student name</label>
+                <input id="studentName" type="text" placeholder="Enter your name" />
+              </div>
+
+              <div class="button-row">
+                <button id="startBtn" class="primary">Start Bank Smart Challenge</button>
+                <a class="button-link secondary" href="/melvinhopewell/">Return to Home</a>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Banking wisdom</h3>
+              <p>
+                Good banking is not flashy. It is a quiet machine that keeps your money from rolling downhill into a ditch.
+              </p>
+              <ul>
+                <li>Track your balance.</li>
+                <li>Use savings like a shield, not confetti.</li>
+                <li>Watch for fees.</li>
+                <li>Turn on alerts.</li>
+                <li>Treat suspicious messages like trapdoors wearing disguises.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="gameScreen" class="screen">
+          <div class="stats-grid">
+            <div class="stat">
+              <div class="stat-label">Round</div>
+              <div class="stat-value" id="roundStat">1 / 10</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Checking</div>
+              <div class="stat-value" id="checkingStat">$450</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Savings</div>
+              <div class="stat-value" id="savingsStat">$150</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Bank Skill</div>
+              <div class="stat-value" id="skillStat">55</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Student</div>
+              <div class="stat-value" id="studentStat">Player</div>
+            </div>
+          </div>
+
+          <div class="meter-wrap">
+            <div class="meter-label">
+              <span>Bank Skill Meter</span>
+              <span id="bandText">Developing</span>
+            </div>
+            <div class="smart-meter">
+              <div id="smartPin" class="smart-pin"></div>
+            </div>
+          </div>
+
+          <div class="round-grid">
+            <div class="round-card">
+              <div id="roundMeta"></div>
+              <h3 id="scenarioTitle">Scenario Title</h3>
+              <p id="scenarioText" class="scenario-text"></p>
+              <div id="choicesBox" class="choices"></div>
+
+              <div id="feedbackBox" class="feedback-box">
+                <strong>Banking Impact</strong>
+                <div id="feedbackText"></div>
+              </div>
+            </div>
+
+            <div class="sidebar-card">
+              <h3>Account Activity Log</h3>
+              <p>Every banking choice leaves footprints in the financial snow.</p>
+              <div id="logBox" class="log"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="endScreen" class="screen">
+          <div class="result-card">
+            <div id="resultBadge"></div>
+            <h2 id="resultTitle">Result</h2>
+            <p id="resultText"></p>
+
+            <div class="summary-grid">
+              <div class="summary-box">
+                <h4>Final Checking</h4>
+                <p id="finalChecking">$0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Final Savings</h4>
+                <p id="finalSavings">$0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Bank Skill</h4>
+                <p id="finalSkill">0</p>
+              </div>
+              <div class="summary-box">
+                <h4>Risk Flags</h4>
+                <p id="finalFlags">0</p>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="playAgainBtn" class="primary">Play Again</button>
+              <button id="copyBtn" class="secondary">Copy Submission Summary</button>
+              <a class="button-link secondary" href="/melvinhopewell/">Back to Home</a>
+            </div>
+
+            <div class="submission-box">
+              <h3>Submission Summary</h3>
+              <textarea id="submissionText" readonly></textarea>
+              <div class="tiny-note">Copy this text and submit it in Canvas.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        factor: "Balance Tracking",
+        alert: "Overdraft risk",
+        title: "The Almost-Empty Checking Account",
+        text: "You are about to use your debit card, but your checking balance is lower than you thought. A streaming payment is also about to hit tonight.",
+        choices: [
+          {
+            label: "Check your balance and wait until more money is available",
+            description: "Patience saves fees and embarrassment.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 12,
+            riskDelta: -2,
+            note: "Checking your balance before spending is one of the cleanest ways to avoid overdrafts."
+          },
+          {
+            label: "Move a small amount from savings first, then make the purchase",
+            description: "Not glamorous, but practical.",
+            checkingDelta: 40,
+            savingsDelta: -40,
+            skillDelta: 8,
+            riskDelta: -1,
+            note: "Transferring money with intention kept the account from wobbling."
+          },
+          {
+            label: "Swipe the card and hope it works out",
+            description: "Hope is not a banking tool.",
+            checkingDelta: -35,
+            savingsDelta: 0,
+            skillDelta: -12,
+            riskDelta: 10,
+            note: "Ignoring a low balance can trigger overdrafts or declined payments."
+          }
+        ]
+      },
+      {
+        factor: "Savings Habits",
+        alert: "Short-term temptation",
+        title: "Birthday Money Decision",
+        text: "You receive $100 as a gift. You could save it, split it, or spend it all before the envelope cools off.",
+        choices: [
+          {
+            label: "Deposit most of it into savings",
+            description: "Future You applauds softly but sincerely.",
+            checkingDelta: 0,
+            savingsDelta: 80,
+            skillDelta: 12,
+            riskDelta: -2,
+            note: "Building savings creates a cushion for future surprises."
+          },
+          {
+            label: "Split it between savings and spending",
+            description: "A balanced move.",
+            checkingDelta: 20,
+            savingsDelta: 40,
+            skillDelta: 6,
+            riskDelta: 0,
+            note: "A split decision still strengthens savings while allowing some flexibility."
+          },
+          {
+            label: "Spend it all immediately",
+            description: "The money enters the room and leaves wearing roller skates.",
+            checkingDelta: -100,
+            savingsDelta: 0,
+            skillDelta: -8,
+            riskDelta: 4,
+            note: "Spending surprise money right away means no added protection for later."
+          }
+        ]
+      },
+      {
+        factor: "Account Security",
+        alert: "Phishing risk",
+        title: "Suspicious Text Message",
+        text: "You get a text that claims your bank account is locked and asks you to click a link and enter your login information.",
+        choices: [
+          {
+            label: "Do not click. Contact the bank directly through the official app or number",
+            description: "Excellent fraud defense.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 15,
+            riskDelta: -6,
+            note: "Smart move. Suspicious messages should be verified through official bank channels."
+          },
+          {
+            label: "Click the link but back out quickly",
+            description: "You tiptoed near a trapdoor.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: -5,
+            riskDelta: 5,
+            note: "Even clicking suspicious links can expose you to scams."
+          },
+          {
+            label: "Enter your information because the message looked urgent",
+            description: "Urgency is one of scam season’s favorite costumes.",
+            checkingDelta: -120,
+            savingsDelta: 0,
+            skillDelta: -18,
+            riskDelta: 16,
+            note: "Sharing bank login information through an unsolicited link can lead to fraud."
+          }
+        ]
+      },
+      {
+        factor: "Mobile Deposit",
+        alert: "Deposit hold",
+        title: "Check Deposit Confusion",
+        text: "You need money from a paper check quickly. You can deposit it carefully, rush it, or try something very unwise.",
+        choices: [
+          {
+            label: "Use mobile deposit correctly and keep the check until it clears",
+            description: "The careful path wins again.",
+            checkingDelta: 90,
+            savingsDelta: 0,
+            skillDelta: 12,
+            riskDelta: -2,
+            note: "Using mobile deposit properly helps you avoid duplicate deposit problems."
+          },
+          {
+            label: "Deposit it but spend all the money immediately before it clears",
+            description: "A risky sprint.",
+            checkingDelta: 90,
+            savingsDelta: 0,
+            skillDelta: -4,
+            riskDelta: 8,
+            note: "Deposits can be delayed or reversed, so spending before funds truly clear can cause trouble."
+          },
+          {
+            label: "Try to deposit the same check twice",
+            description: "That is not a clever shortcut. That is a bright red flag.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: -18,
+            riskDelta: 18,
+            note: "Trying to deposit a check twice can trigger account issues and fraud concerns."
+          }
+        ]
+      },
+      {
+        factor: "Fees",
+        alert: "ATM fee trap",
+        title: "Cash Now or Cash Smart",
+        text: "You need cash, but the closest ATM is out-of-network and charges a fee. Your bank’s ATM is farther away.",
+        choices: [
+          {
+            label: "Wait and use your bank’s ATM later",
+            description: "Mild inconvenience, better outcome.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 10,
+            riskDelta: -1,
+            note: "Avoiding unnecessary ATM fees keeps more money in your account."
+          },
+          {
+            label: "Use the out-of-network ATM once for a real need",
+            description: "Not ideal, but understandable.",
+            checkingDelta: -4,
+            savingsDelta: 0,
+            skillDelta: 2,
+            riskDelta: 0,
+            note: "Sometimes paying a fee is manageable, but it is better as the exception, not the habit."
+          },
+          {
+            label: "Use any ATM anytime without checking fees",
+            description: "Fees multiply quietly, like dust bunnies with bank accounts.",
+            checkingDelta: -18,
+            savingsDelta: 0,
+            skillDelta: -10,
+            riskDelta: 4,
+            note: "Repeated fee blindness can quietly drain a checking account."
+          }
+        ]
+      },
+      {
+        factor: "Overdraft Protection",
+        alert: "Fee decision",
+        title: "Overdraft Options",
+        text: "Your bank asks whether you want overdraft coverage for everyday debit purchases.",
+        choices: [
+          {
+            label: "Learn the policy and choose the option that limits surprise fees",
+            description: "Knowledge first, settings second.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 14,
+            riskDelta: -4,
+            note: "Understanding overdraft options helps you avoid expensive surprises."
+          },
+          {
+            label: "Turn it on without reading anything",
+            description: "That is how settings become little fee goblins.",
+            checkingDelta: -8,
+            savingsDelta: 0,
+            skillDelta: -8,
+            riskDelta: 7,
+            note: "Overdraft coverage can be costly if you do not understand how it works."
+          },
+          {
+            label: "Ignore the notice completely",
+            description: "The bank settings fog grows thicker.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: -5,
+            riskDelta: 5,
+            note: "Ignoring account settings can leave you exposed to preventable problems."
+          }
+        ]
+      },
+      {
+        factor: "Alerts and Monitoring",
+        alert: "Fraud prevention",
+        title: "Notification Settings",
+        text: "Your banking app offers balance alerts, large transaction alerts, and login notifications.",
+        choices: [
+          {
+            label: "Turn on useful alerts",
+            description: "Tiny digital guard dogs for your account.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 14,
+            riskDelta: -5,
+            note: "Alerts help you spot fraud, low balances, and suspicious activity quickly."
+          },
+          {
+            label: "Turn on only one alert",
+            description: "Better than silence.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 5,
+            riskDelta: -1,
+            note: "Some alerts help, even if you are not fully using the tools available."
+          },
+          {
+            label: "Leave all alerts off because notifications are annoying",
+            description: "Silence is peaceful until fraud strolls through it.",
+            checkingDelta: -20,
+            savingsDelta: 0,
+            skillDelta: -10,
+            riskDelta: 10,
+            note: "Without alerts, you may notice issues later than you should."
+          }
+        ]
+      },
+      {
+        factor: "Debit Card Safety",
+        alert: "Public Wi-Fi",
+        title: "Coffee Shop Banking",
+        text: "You are on public Wi-Fi and want to log into your bank account quickly while waiting for a drink.",
+        choices: [
+          {
+            label: "Wait and use a secure connection",
+            description: "Security beats convenience here.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 12,
+            riskDelta: -3,
+            note: "Avoiding sensitive banking activity on public Wi-Fi helps protect your information."
+          },
+          {
+            label: "Log in once, but avoid moving money",
+            description: "Still not ideal.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: -2,
+            riskDelta: 4,
+            note: "Even checking accounts on unsecured networks can expose data."
+          },
+          {
+            label: "Log in and transfer money on public Wi-Fi",
+            description: "That is giving your account a paper umbrella in a thunderstorm.",
+            checkingDelta: -35,
+            savingsDelta: -20,
+            skillDelta: -14,
+            riskDelta: 14,
+            note: "Public Wi-Fi can increase the risk of intercepted information."
+          }
+        ]
+      },
+      {
+        factor: "Emergency Use of Savings",
+        alert: "Spending priorities",
+        title: "Unexpected Car Repair",
+        text: "A basic car repair costs $120. You can use savings, delay the repair, or swipe and hope for the best later.",
+        choices: [
+          {
+            label: "Use savings for the true emergency",
+            description: "This is what emergency funds are for.",
+            checkingDelta: 0,
+            savingsDelta: -120,
+            skillDelta: 12,
+            riskDelta: -2,
+            note: "Using savings for a real emergency is a responsible choice."
+          },
+          {
+            label: "Delay the repair and hope it gets better",
+            description: "Cars rarely heal through positive thinking.",
+            checkingDelta: -20,
+            savingsDelta: 0,
+            skillDelta: -6,
+            riskDelta: 8,
+            note: "Avoiding a needed repair can create bigger problems and higher costs."
+          },
+          {
+            label: "Ignore the budget and spend without checking anything",
+            description: "A classic invitation for account chaos.",
+            checkingDelta: -140,
+            savingsDelta: 0,
+            skillDelta: -12,
+            riskDelta: 10,
+            note: "Spending without knowing your balance can trigger additional problems."
+          }
+        ]
+      },
+      {
+        factor: "Monthly Review",
+        alert: "Habit check",
+        title: "End-of-Month Account Review",
+        text: "The month ends. You could review transactions, look for mistakes, and move a little money to savings, or you could just close the app and vanish into the sunset.",
+        choices: [
+          {
+            label: "Review the account and transfer a little to savings",
+            description: "A strong finish with tidy habits.",
+            checkingDelta: -25,
+            savingsDelta: 25,
+            skillDelta: 16,
+            riskDelta: -4,
+            note: "Monthly reviews help you catch errors, understand spending, and strengthen savings."
+          },
+          {
+            label: "Review the account but make no transfer",
+            description: "Still a solid habit.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: 8,
+            riskDelta: -2,
+            note: "Reviewing transactions is smart even if you cannot save more that month."
+          },
+          {
+            label: "Skip the review because the balance looks fine enough",
+            description: "Fine enough sometimes hides tiny leaks with sharp teeth.",
+            checkingDelta: 0,
+            savingsDelta: 0,
+            skillDelta: -8,
+            riskDelta: 6,
+            note: "Skipping reviews can leave fees, errors, or suspicious transactions unnoticed."
+          }
+        ]
+      }
+    ];
+
+    const game = {
+      studentName: "Player",
+      round: 0,
+      checking: 450,
+      savings: 150,
+      skill: 55,
+      riskFlags: 0,
+      events: []
+    };
+
+    const startScreen = document.getElementById("startScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const endScreen = document.getElementById("endScreen");
+
+    const roundStat = document.getElementById("roundStat");
+    const checkingStat = document.getElementById("checkingStat");
+    const savingsStat = document.getElementById("savingsStat");
+    const skillStat = document.getElementById("skillStat");
+    const studentStat = document.getElementById("studentStat");
+    const bandText = document.getElementById("bandText");
+    const smartPin = document.getElementById("smartPin");
+
+    const roundMeta = document.getElementById("roundMeta");
+    const scenarioTitle = document.getElementById("scenarioTitle");
+    const scenarioText = document.getElementById("scenarioText");
+    const choicesBox = document.getElementById("choicesBox");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackText = document.getElementById("feedbackText");
+    const logBox = document.getElementById("logBox");
+
+    const resultBadge = document.getElementById("resultBadge");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const finalChecking = document.getElementById("finalChecking");
+    const finalSavings = document.getElementById("finalSavings");
+    const finalSkill = document.getElementById("finalSkill");
+    const finalFlags = document.getElementById("finalFlags");
+    const submissionText = document.getElementById("submissionText");
+
+    function showScreen(screen) {
+      [startScreen, gameScreen, endScreen].forEach(section => section.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function formatMoney(value) {
+      const sign = value < 0 ? "-" : "";
+      return `${sign}$${Math.abs(value).toLocaleString()}`;
+    }
+
+    function getBand(value) {
+      if (value >= 85) return "Bank Wizard";
+      if (value >= 70) return "Sharp";
+      if (value >= 50) return "Developing";
+      return "Wobbly";
+    }
+
+    function updateMeter() {
+      smartPin.style.left = `${clamp(game.skill, 0, 100)}%`;
+      bandText.textContent = getBand(game.skill);
+    }
+
+    function addLog(title, description, moneyDelta, skillDelta) {
+      game.events.unshift({ title, description, moneyDelta, skillDelta });
+      renderLog();
+    }
+
+    function renderLog() {
+      if (game.events.length === 0) {
+        logBox.innerHTML = "<div class='log-item'><p>No banking choices yet. The account is quiet and suspiciously peaceful.</p></div>";
+        return;
+      }
+
+      logBox.innerHTML = game.events.map(event => {
+        const moneyClass = event.moneyDelta >= 0 ? "money-up" : "money-down";
+        const moneyText = `${event.moneyDelta > 0 ? "+" : ""}${formatMoney(event.moneyDelta)}`;
+        const skillClass = event.skillDelta >= 0 ? "score-up" : "score-down";
+        const skillText = `${event.skillDelta > 0 ? "+" : ""}${event.skillDelta} skill`;
+
+        return `
+          <div class="log-item">
+            <div class="log-top">
+              <span>${event.title}</span>
+              <span class="${moneyClass}">${moneyText}</span>
+            </div>
+            <p>${event.description}</p>
+            <p style="margin-top:8px;"><span class="${skillClass}" style="font-weight:700;">${skillText}</span></p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function updateStats() {
+      roundStat.textContent = `${Math.min(game.round + 1, 10)} / 10`;
+      checkingStat.textContent = formatMoney(game.checking);
+      savingsStat.textContent = formatMoney(game.savings);
+      skillStat.textContent = game.skill;
+      studentStat.textContent = game.studentName;
+      updateMeter();
+    }
+
+    function renderRound() {
+      feedbackBox.classList.remove("show");
+
+      if (game.round >= scenarios.length) {
+        endGame();
+        return;
+      }
+
+      const scenario = scenarios[game.round];
+
+      roundMeta.innerHTML = `
+        <span class="factor-chip">Factor: ${scenario.factor}</span>
+        <span class="factor-chip alert-chip">Risk Flags: ${game.riskFlags}</span>
+      `;
+
+      scenarioTitle.textContent = scenario.title;
+      scenarioText.textContent = scenario.text;
+
+      choicesBox.innerHTML = scenario.choices.map((choice, index) => `
+        <div class="choice">
+          <div class="choice-title">
+            <span>Option ${index + 1}</span>
+            <span>${choice.skillDelta > 0 ? "+" : ""}${choice.skillDelta} skill</span>
+          </div>
+          <p><strong>${choice.label}</strong></p>
+          <p>${choice.description}</p>
+          <button class="choose-btn" onclick="chooseOption(${index})">Choose This Option</button>
+        </div>
+      `).join("");
+
+      updateStats();
+    }
+
+    function resetGame() {
+      game.studentName = document.getElementById("studentName").value.trim() || "Player";
+      game.round = 0;
+      game.checking = 450;
+      game.savings = 150;
+      game.skill = 55;
+      game.riskFlags = 0;
+      game.events = [];
+      renderLog();
+      showScreen(gameScreen);
+      renderRound();
+    }
+
+    window.chooseOption = function(index) {
+      const scenario = scenarios[game.round];
+      const choice = scenario.choices[index];
+
+      game.checking += choice.checkingDelta;
+      game.savings += choice.savingsDelta;
+      game.skill = clamp(game.skill + choice.skillDelta, 0, 100);
+
+      if (game.checking < 0) {
+        game.checking -= 35;
+        game.riskFlags += 1;
+        game.skill = clamp(game.skill - 6, 0, 100);
+      }
+
+      if (choice.riskDelta > 0) {
+        game.riskFlags += 1;
+      }
+
+      if (game.savings < 0) {
+        game.savings = 0;
+      }
+
+      addLog(
+        scenario.title,
+        `${choice.label}. ${choice.note}`,
+        choice.checkingDelta + choice.savingsDelta,
+        choice.skillDelta
+      );
+
+      feedbackText.innerHTML = `
+        <div><strong>Result:</strong> ${choice.note}</div>
+        <div style="margin-top:8px;"><strong>Checking:</strong> ${formatMoney(game.checking)}</div>
+        <div style="margin-top:8px;"><strong>Savings:</strong> ${formatMoney(game.savings)}</div>
+        <div style="margin-top:8px;"><strong>Bank Skill:</strong> ${game.skill}</div>
+      `;
+      feedbackBox.classList.add("show");
+
+      game.round += 1;
+      updateStats();
+
+      setTimeout(() => {
+        renderRound();
+      }, 900);
+    };
+
+    function getResultData() {
+      if (game.skill >= 82 && game.riskFlags <= 1 && game.checking >= 150) {
+        return {
+          badgeClass: "excellent",
+          badgeText: "Bank Wizard",
+          title: "You handled your accounts like a calm vault engineer.",
+          text: "You tracked balances, protected your accounts, avoided silly fees, and made banking decisions with real-world smarts."
+        };
+      }
+
+      if (game.skill >= 68 && game.riskFlags <= 3) {
+        return {
+          badgeClass: "good",
+          badgeText: "Sharp Banker",
+          title: "You kept your banking habits strong and steady.",
+          text: "A few bumps showed up, but overall you made smart choices and kept your money on a better path."
+        };
+      }
+
+      if (game.skill >= 50) {
+        return {
+          badgeClass: "fair",
+          badgeText: "Still Learning",
+          title: "You made it through, but a few fees and risks nipped at your heels.",
+          text: "Some strong choices helped, though a few risky moments made your accounts shakier than they needed to be."
+        };
+      }
+
+      return {
+        badgeClass: "rough",
+        badgeText: "Fee Fog",
+        title: "Your banking month wandered into a swamp of avoidable trouble.",
+        text: "Risky clicks, weak tracking, or poor account habits piled up. The good news is that a replay lets you rebuild from cleaner ground."
+      };
+    }
+
+    function buildSubmissionSummary(result) {
+      const lines = [];
+      lines.push("Bank Smart Challenge Submission Summary");
+      lines.push(`Student: ${game.studentName}`);
+      lines.push(`Final Checking: ${formatMoney(game.checking)}`);
+      lines.push(`Final Savings: ${formatMoney(game.savings)}`);
+      lines.push(`Bank Skill: ${game.skill}`);
+      lines.push(`Risk Flags: ${game.riskFlags}`);
+      lines.push(`Result: ${result.badgeText}`);
+      lines.push("");
+      lines.push("Account Activity Log:");
+
+      const orderedEvents = [...game.events].reverse();
+      orderedEvents.forEach((event, i) => {
+        lines.push(`${i + 1}. ${event.title} | ${event.moneyDelta > 0 ? "+" : ""}${formatMoney(event.moneyDelta)}`);
+        lines.push(`   ${event.description}`);
+      });
+
+      lines.push("");
+      lines.push("Reflection:");
+      lines.push("The strongest banking choices were checking balances, avoiding scams, using alerts, watching fees, and protecting savings for real needs.");
+
+      return lines.join("\n");
+    }
+
+    function endGame() {
+      const result = getResultData();
+
+      resultBadge.innerHTML = `<span class="status-pill ${result.badgeClass}">${result.badgeText}</span>`;
+      resultTitle.textContent = result.title;
+      resultText.textContent = result.text;
+      finalChecking.textContent = formatMoney(game.checking);
+      finalSavings.textContent = formatMoney(game.savings);
+      finalSkill.textContent = game.skill;
+      finalFlags.textContent = game.riskFlags;
+      submissionText.value = buildSubmissionSummary(result);
+
+      showScreen(endScreen);
+    }
+
+    async function copySummary() {
+      const text = submissionText.value;
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Submission summary copied.");
+      } catch (error) {
+        submissionText.select();
+        document.execCommand("copy");
+        alert("Submission summary copied.");
+      }
+    }
+
+    document.getElementById("startBtn").addEventListener("click", resetGame);
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      document.getElementById("studentName").value = game.studentName === "Player" ? "" : game.studentName;
+      showScreen(startScreen);
+    });
+    document.getElementById("copyBtn").addEventListener("click", copySummary);
+
+    renderLog();
+    updateStats();
+  </script>
+</body>
+</html>
   <div class="card">
     <h1>Bank Smart Challenge</h1>
     <p>This game page is live and ready for your full build.</p>
